@@ -16,8 +16,11 @@
               <a class="nav-link" href="about.html">About</a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" v-if="!currentUser">
               <a class="nav-link" @click="login" >Login</a>
+            </li>
+            <li class="nav-item" v-if="currentUser">
+              <a class="nav-link" @click="logout" >Logout</a>
             </li>
 
           </ul>
@@ -236,6 +239,18 @@
           alert("Sorry " + email + "was a problem signing in. " + errorMessage);
         });
 
+      },
+      logout() {
+        Firebase.auth().signOut().then(function () {
+          alert('logged out');
+        }).catch(function (error) {
+          alert('Error logging out ' + error.message)
+        })
+      }
+    },
+    computed: {
+      currentUser() {
+        return this.$store.getters.currentUser
       }
     }
   }
