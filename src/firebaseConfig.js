@@ -9,11 +9,11 @@ var config = {
   storageBucket: "uploader-5bdaa.appspot.com",
   messagingSenderId: "904770783084",
 
-  clientId: "904770783084-v981atj467q71cur4ggtp672b5o5e4o6.apps.googleusercontent.com",
-  scopes: [
-    "email",
-    "profile"
-  ]
+  // clientId: "904770783084-v981atj467q71cur4ggtp672b5o5e4o6.apps.googleusercontent.com",
+  // scopes: [
+  //   "email",
+  //   "profile"
+  // ]
 };
 
 const firebaseApp = Firebase.initializeApp(config);
