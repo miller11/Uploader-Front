@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import users from './modules/user'
+import user from './modules/user'
+import photoOwner from './modules/photoOwner'
 import { firebaseMutations} from 'vuexfire'
-
 
 Vue.use(Vuex);
 
-export const store = new Vuex.Store( {
+export const store = new Vuex.Store({
   mutations: { ...firebaseMutations },
   modules: {
-    users
+    user, photoOwner
   }
 });

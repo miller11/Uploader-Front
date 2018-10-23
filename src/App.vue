@@ -12,16 +12,29 @@
 
 
           <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="about.html">About</a>
+            <li class="nav-item" v-if="isPhotoOwner">
+              <a class="nav-link" href="">Manage Albums</a>
             </li>
 
             <li class="nav-item" v-if="!currentUser">
               <a class="nav-link" @click="login" >Login</a>
             </li>
-            <li class="nav-item" v-if="currentUser">
-              <a class="nav-link" @click="logout" >Logout</a>
+            <li class="nav-item" >
+              <a class="nav-link" @click="logout" ></a>
             </li>
+
+            <li class="nav-item dropdown" v-if="currentUser">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPortfolio" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ currentUser.displayName }}
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownPortfolio">
+                <a class="dropdown-item" href="portfolio-1-col.html">Manage Albums</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" @click="logout">Log Out</a>
+              </div>
+            </li>
+
+
 
           </ul>
         </div>
@@ -206,6 +219,7 @@
       store.dispatch('setUser', user);
     } else {
       store.dispatch('setUser', null);
+      store.dispatch('setIsPhotoOwner', false);
     }
   });
 
@@ -224,6 +238,17 @@
           // The signed-in user info.
           var user = result.user;
           // ...
+          Firebase.auth().currentUser.getIdTokenResult()
+            .then((idTokenResult) => {
+              // Confirm the user is an Admin.
+              if (!!idTokenResult.claims.admin) {
+                // Show admin UI.
+                store.dispatch('setIsPhotoOwner', true);
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
 
 
         }).catch(function(error) {
@@ -251,6 +276,9 @@
     computed: {
       currentUser() {
         return this.$store.getters.currentUser
+      },
+      isPhotoOwner() {
+        return this.$store.getters.photoOwner
       }
     }
   }
