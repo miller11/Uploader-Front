@@ -11,6 +11,9 @@
     "main": "node $NODE_DEBUG_OPTION ./app-compiled.js"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.6",
+    "@fortawesome/free-solid-svg-icons": "^5.4.1",
+    "@fortawesome/vue-fontawesome": "^0.1.1",
     "axios": "^0.18.0",
     "babel-cli": "^6.26.0",
     "bootstrap-vue": "^2.0.0-rc.9",
@@ -32,7 +35,6 @@
     "not ie <= 8"
   ],
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.4.1",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.0",

@@ -7,7 +7,7 @@
     </div>
     <div class="large-12 medium-12 small-12 cell">
       <div v-for="(file, key) in files" class="file-listing">{{ file.name }}
-        <span class="btn btn-danger btn-sm" v-on:click="removeFile( key )"><i class="fas fa-trash"></i></span>
+        <span class="btn btn-danger btn-sm" v-on:click="removeFile( key )"> <font-awesome-icon icon="trash"></font-awesome-icon></span>
       </div>
     </div>
     <br>
@@ -22,9 +22,17 @@
 </template>
 
 <script>
-  //import 'font-awesome/css/font-awesome.css'
+  import { library } from '@fortawesome/fontawesome-svg-core'
+  import { faTrash } from '@fortawesome/free-solid-svg-icons'
+  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+  library.add(faTrash);
 
   export default {
+    components: {
+      fontAwesomeIcon: FontAwesomeIcon
+    },
+
     /*
       Defines the data used by the component
     */

@@ -32,18 +32,26 @@
         </form>
       </div>
     </div>
+
+    <div class="row">
+      <u-files></u-files>
+    </div>
+
   </div>
 </template>
 
 <script>
 
-  import bAlert from 'bootstrap-vue/es/components/alert/alert';
+  import Files from './Files'
+
+  import Alert from 'bootstrap-vue/es/components/alert/alert';
   import {dbAlbumsRef} from "../firebaseConfig";
 
 
   export default {
         components:  {
-          bAlert: bAlert
+          bAlert: Alert,
+          uFiles: Files
         },
         data() {
           return {
