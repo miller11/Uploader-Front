@@ -20,7 +20,7 @@
               {{ currentUser.displayName }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownPortfolio">
-              <a class="dropdown-item" href="portfolio-1-col.html">Manage Albums</a>
+              <router-link :to="{name: 'albumsLink'}"><a class="dropdown-item">Manage Albums</a></router-link>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" @click="logout">Log Out</a>
             </div>

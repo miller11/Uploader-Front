@@ -18,3 +18,6 @@ var config = {
 
 const firebaseApp = Firebase.initializeApp(config);
 export const provider = new Firebase.auth.GoogleAuthProvider();
+
+const db = firebaseApp.database();
+export const dbAlbumsRef = db.ref('albums');

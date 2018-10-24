@@ -1,11 +1,9 @@
 <template>
-
   <div>
     <u-navbar></u-navbar>
 
 
     <router-view></router-view>
-
 
     <u-footer></u-footer>
   </div>
@@ -37,5 +35,7 @@
 </script>
 
 <style>
-
+  html,body{
+    height: 100%
+  }
 </style>
