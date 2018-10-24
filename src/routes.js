@@ -5,6 +5,6 @@ import Album from './components/Album'
 export const routes = [
   {path: '/', name: 'homeLink', component: Home},
   {path: '/albums', name: 'albumsLink', component: ManageAlbums},
-  {path: '/albums/:albumId', name: 'albumLink', component: Album},
+  {path: '/albums/:albumKey', name: 'albumLink', component: Album},
   {path: '*', redirect: '/' }
 ];

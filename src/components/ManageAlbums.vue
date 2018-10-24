@@ -2,7 +2,7 @@
   <div class="container padding full-page">
     <div class="row">
       <div class="col-sm-2 offset-10">
-        <router-link :to="{name: 'albumLink', params: { albumId: null }}"><a href="" class="btn btn-success">+ New Album</a></router-link>
+        <router-link :to="{name: 'albumLink', params: { albumKey: null }}"><a href="" class="btn btn-success">+ New Album</a></router-link>
       </div>
     </div>
   </div>

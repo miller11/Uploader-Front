@@ -48,7 +48,7 @@
         data() {
           return {
             album: {},
-            albumId: this.$route.params.albumId,
+            albumKey: this.$route.params.albumKey,
             alert: {
               message: '',
               warningCountDown: 0,
@@ -58,10 +58,29 @@
         },
       methods: {
         saveAlbum() {
-          dbAlbumsRef.push(this.album);
+          let data = this;
 
-          this.alert.message = "Album has been saved";
-          this.alert.successCountDown = 5;
+          if(data.albumKey === null) {
+          data.albumKey = dbAlbumsRef.push(data.album, function(error) {
+            if (error) {
+              data.alert.message = "There was an issue saving the album." + error.message;
+              data.alert.warningCountDown = 5;
+            } else {
+              data.alert.message = "Album has been saved";
+              data.alert.successCountDown = 5;
+            }
+          }).key;
+          } else {
+            dbAlbumsRef.child(data.albumKey).update(data.album, function(error) {
+              if (error) {
+                data.alert.message = "There was an issue saving the album." + error.message;
+                data.alert.warningCountDown = 5;
+              } else {
+                data.alert.message = "Album has been saved";
+                data.alert.successCountDown = 5;
+              }
+            });
+          }
         }
       }
     }
