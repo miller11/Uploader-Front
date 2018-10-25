@@ -2,14 +2,16 @@
   <div class="container">
 
     <div class="row">
-      <div id="file-drag-drop col-sm-12">
+      <div class="col">
+      <div id="file-drag-drop">
         <form ref="fileform" v-on:click="addFiles()" class="text-success">
           <span class="drop-files">Drag and drop a file</span>
         </form>
       </div>
+      </div>
 
 
-      <div class="large-12 medium-12 small-12 cell">
+      <div class="col">
         <label class="sr-only">Files
           <input type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()"/>
         </label>
