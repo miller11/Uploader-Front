@@ -9,7 +9,7 @@
 
 
     <div class="large-12 medium-12 small-12 cell">
-      <label>Files
+      <label class="sr-only">Files
         <input type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()"/>
       </label>
     </div>
@@ -38,6 +38,8 @@
       </tbody>
     </table>
 
+    <button @click="submitFiles" class="btn btn-primary">Submit</button>
+
   </div>
 </template>
 
@@ -45,6 +47,8 @@
   import { library } from '@fortawesome/fontawesome-svg-core'
   import { faTrash } from '@fortawesome/free-solid-svg-icons'
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+  import {stAlbumsRef} from "../firebaseConfig";
 
   library.add(faTrash);
 
@@ -78,37 +82,49 @@
         Submits files to the server
       */
       submitFiles() {
+        for (let i = 0; i < this.files.length; i++) {
+          let file = this.files[i];
+
+          let imageRef = stAlbumsRef.child(file.name);
+
+          imageRef.put(file).then(function(snapshot) {
+            console.log('Uploaded a blob or file!');
+          });
+        }
+
+
+
         /*
           Initialize the form data
         */
-        let formData = new FormData();
-
-        /*
-          Iteate over any file sent over appending the files
-          to the form data.
-        */
-        for (var i = 0; i < this.files.length; i++) {
-          let file = this.files[i];
-
-          formData.append('files[' + i + ']', file);
-        }
-
-        /*
-          Make the request to the POST /select-files URL
-        */
-        axios.post('/select-files',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          }
-        ).then(function () {
-          console.log('SUCCESS!!');
-        })
-          .catch(function () {
-            console.log('FAILURE!!');
-          });
+        // let formData = new FormData();
+        //
+        // /*
+        //   Iteate over any file sent over appending the files
+        //   to the form data.
+        // */
+        // for (var i = 0; i < this.files.length; i++) {
+        //   let file = this.files[i];
+        //
+        //   formData.append('files[' + i + ']', file);
+        // }
+        //
+        // /*
+        //   Make the request to the POST /select-files URL
+        // */
+        // axios.post('/select-files',
+        //   formData,
+        //   {
+        //     headers: {
+        //       'Content-Type': 'multipart/form-data'
+        //     }
+        //   }
+        // ).then(function () {
+        //   console.log('SUCCESS!!');
+        // })
+        //   .catch(function () {
+        //     console.log('FAILURE!!');
+        //   });
       },
 
       /*
@@ -179,11 +195,11 @@
     min-height: 6em;
     margin: 40px auto auto;
     text-align: center;
-    border: 0.2em dashed currentColor;
+    border: 0.15em dashed currentColor;
   }
 
   form:hover {
-    border: 0.2em solid currentColor;
+    border: 0.15em solid currentColor;
     cursor: pointer;
   }
 

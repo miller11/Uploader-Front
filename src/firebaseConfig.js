@@ -8,12 +8,6 @@ var config = {
   projectId: "uploader-5bdaa",
   storageBucket: "uploader-5bdaa.appspot.com",
   messagingSenderId: "904770783084",
-
-  // clientId: "904770783084-v981atj467q71cur4ggtp672b5o5e4o6.apps.googleusercontent.com",
-  // scopes: [
-  //   "email",
-  //   "profile"
-  // ]
 };
 
 const firebaseApp = Firebase.initializeApp(config);
@@ -21,3 +15,7 @@ export const provider = new Firebase.auth.GoogleAuthProvider();
 
 const db = firebaseApp.database();
 export const dbAlbumsRef = db.ref('albums');
+
+const storage = Firebase.storage();
+
+export const stAlbumsRef = storage.ref().child('albums');
