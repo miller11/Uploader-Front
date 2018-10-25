@@ -1,42 +1,36 @@
 <template>
-  <div>
+  <div class="container">
 
-    <div id="file-drag-drop">
-      <form ref="fileform" v-on:click="addFiles()" class="text-success">
-        <span class="drop-files">Drag and drop a file</span>
-      </form>
+    <div class="row">
+      <div id="file-drag-drop col-sm-12">
+        <form ref="fileform" v-on:click="addFiles()" class="text-success">
+          <span class="drop-files">Drag and drop a file</span>
+        </form>
+      </div>
+
+
+      <div class="large-12 medium-12 small-12 cell">
+        <label class="sr-only">Files
+          <input type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()"/>
+        </label>
+      </div>
     </div>
 
+    <div class="row">
+      <div class="col-2">
+        <font-awesome-icon icon="image" size="3x"/>
+      </div>
+      <div class="col-10">
+        <div class="row">
 
-    <div class="large-12 medium-12 small-12 cell">
-      <label class="sr-only">Files
-        <input type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()"/>
-      </label>
+        </div>
+
+        <div class="row pt-1">
+          <b-progress :value="69" :max="100" height=".5rem" class="w-75 align-baseline"></b-progress>
+        </div>
+      </div>
     </div>
 
-    <div class="form-group inputDnD">
-      <label class="sr-only" for="inputFile">File Upload</label>
-      <input type="file" class="form-control-file text-warning font-weight-bold" id="inputFile" accept="image/*" data-title="Drag and drop a file">
-    </div>
-
-    <table class="table">
-      <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Name</th>
-        <th scope="col">Size</th>
-        <th scope="col"></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="(file, index) in files" class="file-listing">
-        <td scope="row">{{ index + 1 }}</td>
-        <td>{{ file.name }}</td>
-        <td>{{ file.size | prettyBytes }}</td>
-        <td><span class="btn btn-danger btn-sm" v-on:click="removeFile( index )"><font-awesome-icon icon="trash"></font-awesome-icon></span></td>
-      </tr>
-      </tbody>
-    </table>
 
     <button @click="submitFiles" class="btn btn-primary">Submit</button>
 
@@ -44,17 +38,23 @@
 </template>
 
 <script>
-  import { library } from '@fortawesome/fontawesome-svg-core'
-  import { faTrash } from '@fortawesome/free-solid-svg-icons'
-  import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  import {library} from '@fortawesome/fontawesome-svg-core'
+  import {faTrash} from '@fortawesome/free-solid-svg-icons'
+  import {faImage} from '@fortawesome/free-solid-svg-icons'
+  import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
+
+  import bProgress from 'bootstrap-vue/es/components/progress/progress';
+
 
   import {stAlbumsRef} from "../firebaseConfig";
 
   library.add(faTrash);
+  library.add(faImage);
 
   export default {
     components: {
-      fontAwesomeIcon: FontAwesomeIcon
+      fontAwesomeIcon: FontAwesomeIcon,
+      bProgress: bProgress
     },
 
     props: ['albumKey'],
@@ -87,11 +87,31 @@
 
           let imageRef = stAlbumsRef.child(file.name);
 
-          imageRef.put(file).then(function(snapshot) {
-            console.log('Uploaded a blob or file!');
-          });
-        }
+          let uploadTask = imageRef.put(file);
 
+          uploadTask.on('state_changed', function (snapshot) {
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+            switch (snapshot.state) {
+              case firebase.storage.TaskState.PAUSED: // or 'paused'
+                console.log('Upload is paused');
+                break;
+              case firebase.storage.TaskState.RUNNING: // or 'running'
+                console.log('Upload is running');
+                break;
+            }
+          }, function (error) {
+            // Handle unsuccessful uploads
+          }, function () {
+            // Handle successful uploads on complete
+            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+              console.log('File available at', downloadURL);
+            });
+          });
+
+        }
 
 
         /*
@@ -148,13 +168,13 @@
         this.files.splice(key, 1);
       }
     }, mounted() {
-      ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'].forEach( function( evt ) {
+      ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'].forEach(function (evt) {
         /*
           For each event add an event listener that prevents the default action
           (opening the file in the browser) and stop the propagation of the event (so
           no other elements open the file in the browser)
         */
-        this.$refs.fileform.addEventListener(evt, function(e){
+        this.$refs.fileform.addEventListener(evt, function (e) {
           e.preventDefault();
           e.stopPropagation();
         }.bind(this), false);
@@ -163,13 +183,13 @@
       /*
         Add an event listener for drop to the form
       */
-      this.$refs.fileform.addEventListener('drop', function(e){
+      this.$refs.fileform.addEventListener('drop', function (e) {
         /*
           Capture the files from the drop event and add them to our local files
           array.
         */
-        for( let i = 0; i < e.dataTransfer.files.length; i++ ){
-          this.files.push( e.dataTransfer.files[i] );
+        for (let i = 0; i < e.dataTransfer.files.length; i++) {
+          this.files.push(e.dataTransfer.files[i]);
         }
       }.bind(this));
     }
@@ -188,7 +208,7 @@
     width: 200px;
   }
 
-  form{
+  form {
     display: block;
     width: 100%;
     height: 100%;
