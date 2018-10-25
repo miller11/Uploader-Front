@@ -14,7 +14,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-sm-12 col-md-6">
         <form @submit.prevent="saveAlbum">
           <div class="form-group">
             <label for="nameInput">Album name</label>
@@ -31,26 +31,26 @@
           <button type="submit" class="btn btn-primary float-right">Save</button>
         </form>
       </div>
-    </div>
 
-    <div class="row">
-      <u-files></u-files>
+      <div class="col-sm-12 col-md-6">
+        <u-files album-key="albumKey"></u-files>
+      </div>
+
     </div>
 
   </div>
 </template>
 
 <script>
-
   import Files from './Files'
 
-  import Alert from 'bootstrap-vue/es/components/alert/alert';
+  import bAlert from 'bootstrap-vue/es/components/alert/alert';
   import {dbAlbumsRef} from "../firebaseConfig";
 
 
   export default {
         components:  {
-          bAlert: Alert,
+          bAlert: bAlert,
           uFiles: Files
         },
         data() {
