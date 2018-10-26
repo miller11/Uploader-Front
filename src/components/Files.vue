@@ -2,39 +2,49 @@
   <div class="container">
 
     <div class="row">
-      <div class="col">
-      <div id="file-drag-drop">
-        <form ref="fileform" v-on:click="addFiles()" class="text-success">
-          <span class="drop-files">Drag and drop a file</span>
-        </form>
-      </div>
+      <div class="col-sm-12">
+        <div id="file-drag-drop">
+          <form ref="fileform" v-on:click="addFiles()" class="text-success drop-zone">
+            <span class="drop-files">Drag and drop a file <br/> or browse</span>
+          </form>
+        </div>
       </div>
 
 
-      <div class="col">
+      <div class="col-sm-12">
         <label class="sr-only">Files
-          <input type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()"/>
+          <input type="file" id="files" ref="files" accept="image/*" multiple v-on:change="handleFilesUpload()"/>
         </label>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-2">
+    <div class="row pt-1" v-for="(file, index) in files">
+      <div class="col-sm-2">
         <font-awesome-icon icon="image" size="3x"/>
       </div>
-      <div class="col-10">
+      <div class="col-sm-10">
         <div class="row">
-
+          <div class="col-sm-8">
+            <span class="font-weight-light">{{ file.name }}</span>
+          </div>
+          <div class="col-sm-4">
+            <span class="align-bottom text-muted float-right" v-if="filesMetaData[index].progress !== 100"><small>{{ filesMetaData[index].bytesTransferred }} / {{ filesMetaData[index].totalBytes | prettyBytes}}</small></span>
+            <span class="align-bottom text-muted float-right" v-else-if="filesMetaData[index].cancelled"><small>Cancelled</small></span>
+            <span class="align-bottom text-muted float-right" v-else><small>Completed</small></span>
+          </div>
         </div>
 
         <div class="row pt-1">
-          <b-progress :value="69" :max="100" height=".5rem" class="w-75 align-baseline"></b-progress>
+          <div class="col-sm-12">
+          <b-progress :value="filesMetaData[index].progress" :max="100" height=".25rem"
+                      class="align-top" :variant="filesMetaData[index].cancelled ? 'danger' : 'primary'" :striped="filesMetaData[index].cancelled"></b-progress>
+          </div>
         </div>
       </div>
     </div>
 
 
-    <button @click="submitFiles" class="btn btn-primary">Submit</button>
+    <!--<button @click="submitFiles" class="btn btn-primary">Submit</button>-->
 
   </div>
 </template>
@@ -65,13 +75,15 @@
     */
     data() {
       return {
-        files: []
+        files: [],
+        filesMetaData: []
       }
     },
-
-    /*
-      Defines the method used by the component
-    */
+    computed: {
+      albumSaved() {
+        return this.albumKey != null;
+      }
+    },
     methods: {
       /*
         Adds a file
@@ -86,24 +98,21 @@
       submitFiles() {
         for (let i = 0; i < this.files.length; i++) {
           let file = this.files[i];
+          let metaData = this.filesMetaData[i];
+          let uploadTask;
 
-          let imageRef = stAlbumsRef.child(file.name);
-
-          let uploadTask = imageRef.put(file);
+          if (metaData.progress !== 100) {
+            let imageRef = stAlbumsRef.child(file.name);
+            uploadTask = imageRef.put(file);
+          }
 
           uploadTask.on('state_changed', function (snapshot) {
             // Observe state change events such as progress, pause, and resume
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload is ' + progress + '% done');
-            switch (snapshot.state) {
-              case firebase.storage.TaskState.PAUSED: // or 'paused'
-                console.log('Upload is paused');
-                break;
-              case firebase.storage.TaskState.RUNNING: // or 'running'
-                console.log('Upload is running');
-                break;
-            }
+            metaData.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            metaData.bytesTransferred = snapshot.bytesTransferred;
+            metaData.totalBytes = snapshot.totalBytes;
+
           }, function (error) {
             // Handle unsuccessful uploads
           }, function () {
@@ -114,39 +123,6 @@
           });
 
         }
-
-
-        /*
-          Initialize the form data
-        */
-        // let formData = new FormData();
-        //
-        // /*
-        //   Iteate over any file sent over appending the files
-        //   to the form data.
-        // */
-        // for (var i = 0; i < this.files.length; i++) {
-        //   let file = this.files[i];
-        //
-        //   formData.append('files[' + i + ']', file);
-        // }
-        //
-        // /*
-        //   Make the request to the POST /select-files URL
-        // */
-        // axios.post('/select-files',
-        //   formData,
-        //   {
-        //     headers: {
-        //       'Content-Type': 'multipart/form-data'
-        //     }
-        //   }
-        // ).then(function () {
-        //   console.log('SUCCESS!!');
-        // })
-        //   .catch(function () {
-        //     console.log('FAILURE!!');
-        //   });
       },
 
       /*
@@ -156,20 +132,26 @@
         let uploadedFiles = this.$refs.files.files;
 
         /*
-          Adds the uploaded file to the files array
+          Adds the uploaded file to the files array and metaData array
         */
-        for (var i = 0; i < uploadedFiles.length; i++) {
+        for (let i = 0; i < uploadedFiles.length; i++) {
+          this.addFileMetaData(uploadedFiles[i].size);
           this.files.push(uploadedFiles[i]);
         }
-      },
 
-      /*
-        Removes a select file the user has uploaded
-      */
-      removeFile(key) {
-        this.files.splice(key, 1);
+        this.submitFiles();
+      },
+      addFileMetaData(fileSize) {
+        const newMetaData = {
+          progress: 0,
+          bytesTransferred: 0,
+          totalBytes: fileSize
+        };
+
+        this.filesMetaData.push(newMetaData);
       }
-    }, mounted() {
+    },
+    mounted() {
       ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'].forEach(function (evt) {
         /*
           For each event add an event listener that prevents the default action
@@ -191,8 +173,11 @@
           array.
         */
         for (let i = 0; i < e.dataTransfer.files.length; i++) {
+          this.addFileMetaData(e.dataTransfer.files[i].size);
           this.files.push(e.dataTransfer.files[i]);
         }
+
+        this.submitFiles();
       }.bind(this));
     }
   }
@@ -210,7 +195,7 @@
     width: 200px;
   }
 
-  form {
+  .drop-zone {
     display: block;
     width: 100%;
     height: 100%;
@@ -220,7 +205,7 @@
     border: 0.15em dashed currentColor;
   }
 
-  form:hover {
+  .drop-zone:hover {
     border: 0.15em solid currentColor;
     cursor: pointer;
   }
