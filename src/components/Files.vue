@@ -25,13 +25,13 @@
       </div>
       <div class="col-sm-10">
         <div class="row">
-          <div class="col-sm-10">
+          <div class="col-sm-8">
             <span class="font-weight-light">{{ file.name }}</span>
           </div>
-          <div class="col-sm-2">
-            <button type="button" @click="removeFile( index )" class="close float-right" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+          <div class="col-sm-4">
+            <span class="align-bottom text-muted float-right" v-if="filesMetaData[index].progress !== 100"><small>{{ filesMetaData[index].bytesTransferred }} / {{ filesMetaData[index].totalBytes | prettyBytes}}</small></span>
+            <span class="align-bottom text-muted float-right" v-else-if="filesMetaData[index].cancelled"><small>Cancelled</small></span>
+            <span class="align-bottom text-muted float-right" v-else><small>Completed</small></span>
           </div>
         </div>
 
@@ -40,17 +40,12 @@
           <b-progress :value="filesMetaData[index].progress" :max="100" height=".25rem"
                       class="align-top" :variant="filesMetaData[index].cancelled ? 'danger' : 'primary'" :striped="filesMetaData[index].cancelled"></b-progress>
           </div>
-          <div class="col-sm-12">
-            <span class="align-bottom text-muted float-right" v-if="filesMetaData[index].progress !== 100"><small>{{ filesMetaData[index].bytesTransferred }} / {{ filesMetaData[index].totalBytes | prettyBytes}}</small></span>
-            <span class="align-bottom text-muted float-right" v-else-if="filesMetaData[index].cancelled"><small>Cancelled</small></span>
-            <span class="align-bottom text-muted float-right" v-else><small>Completed</small></span>
-          </div>
         </div>
       </div>
     </div>
 
 
-    <button @click="submitFiles" class="btn btn-primary">Submit</button>
+    <!--<button @click="submitFiles" class="btn btn-primary">Submit</button>-->
 
   </div>
 </template>
@@ -106,7 +101,7 @@
           let metaData = this.filesMetaData[i];
           let uploadTask;
 
-          if (!metaData.cancelled) {
+          if (metaData.progress !== 100) {
             let imageRef = stAlbumsRef.child(file.name);
             uploadTask = imageRef.put(file);
           }
@@ -117,10 +112,6 @@
             metaData.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             metaData.bytesTransferred = snapshot.bytesTransferred;
             metaData.totalBytes = snapshot.totalBytes;
-
-            if (metaData.cancelled) {
-              uploadTask.cancel();
-            }
 
           }, function (error) {
             // Handle unsuccessful uploads
@@ -147,22 +138,12 @@
           const newMetaData = {
             progress: 0,
             bytesTransferred: 0,
-            totalBytes: uploadedFiles[i].size,
-            cancelled: false
+            totalBytes: uploadedFiles[i].size
           };
 
           this.filesMetaData.push(newMetaData);
           this.files.push(uploadedFiles[i]);
         }
-      },
-
-      /*
-        Removes a select file the user has uploaded
-      */
-      removeFile(key) {
-        //this.files.splice(key, 1);
-        this.filesMetaData[key].cancelled = true;
-        this.filesMetaData[key].progress = 100;
       }
     }, mounted() {
       ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'].forEach(function (evt) {
