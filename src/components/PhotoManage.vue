@@ -20,7 +20,7 @@
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="#">Add to Marquee</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item text-danger" href="#">Delete</a>
+              <a class="dropdown-item text-danger" @click="deletePhoto">Delete</a>
             </div>
           </div>
         </div>
@@ -33,7 +33,7 @@
   import {library} from '@fortawesome/fontawesome-svg-core'
   import {faList} from '@fortawesome/free-solid-svg-icons'
   import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
-  import {dbAlbumPhotosRef} from "../firebaseConfig";
+  import {dbAlbumPhotosRef, stAlbumPhotosRef} from "../firebaseConfig";
   import LabelEdit from 'label-edit'
 
   library.add(faList);
@@ -60,6 +60,12 @@
           });
         },
         deletePhoto() {
+          dbAlbumPhotosRef(this.albumKey).child(this.photoKey).remove();
+          stAlbumPhotosRef(this.albumKey).child(this.photo.name).delete().then(function() {
+            console.log("Photo deleted");
+          }).catch(function(error) {
+            console.log("Error occurred: " + error.message);
+          });
 
         },
         makeCoverPhoto() {

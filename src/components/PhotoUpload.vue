@@ -3,11 +3,11 @@
     <div class="row">
       <div class="col-sm-12">
         <div id="file-drag-drop">
-          <form ref="fileform" v-on:click="addFiles()" class="text-success drop-zone drop-zone-active" v-if="albumIsSaved">
+          <form ref="fileform" v-on:click="addFiles()" class="text-success drop-zone drop-zone-active" v-show="albumIsSaved">
             <span class="drop-files">Drag and drop a photo <br/> or browse</span>
           </form>
 
-          <div class="text-secondary drop-zone" v-if="!albumIsSaved">
+          <div class="text-secondary drop-zone" v-show="!albumIsSaved">
             <span class="drop-files">Save album to add photos</span>
           </div>
         </div>
