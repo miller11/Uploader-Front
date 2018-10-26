@@ -23,7 +23,7 @@
 
     <div class="row pt-1" v-for="(file, index) in files">
       <div class="col-sm-2">
-        <font-awesome-icon icon="image" size="3x"/>
+        <font-awesome-icon icon="image" size="3x"></font-awesome-icon>
       </div>
       <div class="col-sm-10">
         <div class="row">
