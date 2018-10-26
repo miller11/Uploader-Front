@@ -6,7 +6,9 @@
     <div class="col-sm-10">
       <div class="row">
         <div class="col-sm-8">
-          <span class="font-weight-bold">{{ photo.name }}</span>
+          <div class="align-middle">
+            <label-edit v-bind:text="photoName" v-on:text-updated-blur="textUpdated" v-on:text-updated-enter="textUpdated"></label-edit>
+          </div>
         </div>
         <div class="col-sm-4">
           <div class="btn-group float-right">
@@ -31,13 +33,51 @@
   import {library} from '@fortawesome/fontawesome-svg-core'
   import {faList} from '@fortawesome/free-solid-svg-icons'
   import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
+  import {dbAlbumPhotosRef} from "../firebaseConfig";
+  import LabelEdit from 'label-edit'
 
   library.add(faList);
 
 
   export default {
-      props: ['albumKey', 'photo'],
-      components: {fontAwesomeIcon: FontAwesomeIcon}
+      props: ['albumKey', 'photo', 'photoKey'],
+      components: {
+        fontAwesomeIcon: FontAwesomeIcon,
+        labelEdit: LabelEdit
+      },
+      methods: {
+        textUpdated(text) {
+          let self = this;
+          let ref = dbAlbumPhotosRef(this.albumKey).child(this.photoKey);
+          let update = {displayName: text};
+
+          ref.update(update, function (error) {
+            if (error) {
+              console.log("Error occurred: " + error.message);
+            } else {
+              self.$set(self.photo, 'displayName', text);
+            }
+          });
+        },
+        deletePhoto() {
+
+        },
+        makeCoverPhoto() {
+
+        },
+        makeMarqueePhoto() {
+
+        }
+      },
+      computed: {
+        photoName() {
+          if(this.photo.displayName !== undefined && this.photo.displayName !== null) {
+            return this.photo.displayName
+          }
+
+          return this.photo.name
+        }
+      }
     }
 </script>
 

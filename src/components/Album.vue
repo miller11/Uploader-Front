@@ -45,7 +45,7 @@
     <div class="row" v-if="hasPhotos">
       <div class="col-sm-12 col-md-6">
         <u-photo-manage v-for="(photo, key) in album.photos" :key="key" :album-key="albumKey"
-                        :photo="photo"></u-photo-manage>
+                        :photo="photo" :photo-key="key"></u-photo-manage>
       </div>
     </div>
 
