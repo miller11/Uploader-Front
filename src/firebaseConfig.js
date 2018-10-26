@@ -19,3 +19,10 @@ export const dbAlbumsRef = db.ref('albums');
 const storage = Firebase.storage();
 
 export const stAlbumsRef = storage.ref().child('albums');
+
+
+
+
+export function dbAlbumPhotosRef(albumKey) {
+  return dbAlbumsRef.child(albumKey).child('photos');
+}

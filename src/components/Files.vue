@@ -1,12 +1,15 @@
 <template>
-  <div class="container">
-
+  <div class="pt-2">
     <div class="row">
       <div class="col-sm-12">
         <div id="file-drag-drop">
-          <form ref="fileform" v-on:click="addFiles()" class="text-success drop-zone">
-            <span class="drop-files">Drag and drop a file <br/> or browse</span>
+          <form ref="fileform" v-on:click="addFiles()" class="text-success drop-zone drop-zone-active" v-if="albumIsSaved">
+            <span class="drop-files">Drag and drop a photo <br/> or browse</span>
           </form>
+
+          <div class="text-secondary drop-zone" v-if="!albumIsSaved">
+            <span class="drop-files">Save album to add photos</span>
+          </div>
         </div>
       </div>
 
@@ -57,6 +60,7 @@
 
   import bProgress from 'bootstrap-vue/es/components/progress/progress';
 
+  import {dbAlbumPhotosRef} from "../firebaseConfig";
 
   import {stAlbumsRef} from "../firebaseConfig";
 
@@ -80,7 +84,7 @@
       }
     },
     computed: {
-      albumSaved() {
+      albumIsSaved() {
         return this.albumKey != null;
       }
     },
@@ -96,13 +100,16 @@
         Submits files to the server
       */
       submitFiles() {
+        let self = this;
+
         for (let i = 0; i < this.files.length; i++) {
-          let file = this.files[i];
-          let metaData = this.filesMetaData[i];
+          let file = self.files[i];
+          let metaData = self.filesMetaData[i];
+          let stAlbumRef = stAlbumsRef.child(self.albumKey);
           let uploadTask;
 
           if (metaData.progress !== 100) {
-            let imageRef = stAlbumsRef.child(file.name);
+            let imageRef = stAlbumRef.child(file.name);
             uploadTask = imageRef.put(file);
           }
 
@@ -119,9 +126,10 @@
             // Handle successful uploads on complete
             uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
               console.log('File available at', downloadURL);
+
+              self.saveFileToAlbum(file, downloadURL);
             });
           });
-
         }
       },
 
@@ -149,6 +157,24 @@
         };
 
         this.filesMetaData.push(newMetaData);
+      },
+      saveFileToAlbum(file, fileUrl) {
+        let ref = dbAlbumPhotosRef(this.albumKey);
+
+        let newFile = {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          url: fileUrl
+        };
+
+        ref.push(newFile, function(error) {
+          if (error) {
+            console.log("Error occurred: " + error.message);
+          } else {
+            console.log("Album data has been saved.");
+          }
+        });
       }
     },
     mounted() {
@@ -200,12 +226,11 @@
     width: 100%;
     height: 100%;
     min-height: 6em;
-    margin: 40px auto auto;
     text-align: center;
     border: 0.15em dashed currentColor;
   }
 
-  .drop-zone:hover {
+  .drop-zone-active:hover {
     border: 0.15em solid currentColor;
     cursor: pointer;
   }

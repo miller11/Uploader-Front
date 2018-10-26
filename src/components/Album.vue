@@ -1,5 +1,5 @@
 <template>
-  <div class="container padding full-page">
+  <div class="container pt-2 full-page">
 
     <div class="row">
       <b-alert :show="alert.successCountDown"
@@ -33,7 +33,7 @@
       </div>
 
       <div class="col-sm-12 col-md-6">
-        <u-files album-key="albumKey"></u-files>
+        <u-files :album-key="albumKey"></u-files>
       </div>
 
     </div>
@@ -95,12 +95,6 @@
 </script>
 
 <style scoped>
-
-  .padding {
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
-
   .full-page {
     height: 100%;
     min-height: 100vh;
