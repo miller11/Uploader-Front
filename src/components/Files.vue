@@ -2,31 +2,49 @@
   <div class="container">
 
     <div class="row">
-      <div id="file-drag-drop col-sm-12">
-        <form ref="fileform" v-on:click="addFiles()" class="text-success">
-          <span class="drop-files">Drag and drop a file</span>
-        </form>
+      <div class="col-sm-12">
+        <div id="file-drag-drop">
+          <form ref="fileform" v-on:click="addFiles()" class="text-success">
+            <span class="drop-files">Drag and drop a file</span>
+          </form>
+
+        </div>
       </div>
 
 
-      <div class="large-12 medium-12 small-12 cell">
+      <div class="col-sm-12">
         <label class="sr-only">Files
           <input type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()"/>
         </label>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-2">
+    <div class="row pt-1" v-for="(file, index) in files">
+      <div class="col-sm-2">
         <font-awesome-icon icon="image" size="3x"/>
       </div>
-      <div class="col-10">
+      <div class="col-sm-10">
         <div class="row">
-
+          <div class="col-sm-10">
+            <span class="font-weight-light">{{ file.name }}</span>
+          </div>
+          <div class="col-sm-2">
+            <button type="button" @click="removeFile( index )" class="close float-right" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
         </div>
 
         <div class="row pt-1">
-          <b-progress :value="69" :max="100" height=".5rem" class="w-75 align-baseline"></b-progress>
+          <div class="col-sm-12">
+          <b-progress :value="filesMetaData[index].progress" :max="100" height=".25rem"
+                      class="align-top" :variant="filesMetaData[index].cancelled ? 'danger' : 'primary'" :striped="filesMetaData[index].cancelled"></b-progress>
+          </div>
+          <div class="col-sm-12">
+            <span class="align-bottom text-muted float-right" v-if="filesMetaData[index].progress !== 100"><small>{{ filesMetaData[index].bytesTransferred }} / {{ filesMetaData[index].totalBytes | prettyBytes}}</small></span>
+            <span class="align-bottom text-muted float-right" v-else-if="filesMetaData[index].cancelled"><small>Cancelled</small></span>
+            <span class="align-bottom text-muted float-right" v-else><small>Completed</small></span>
+          </div>
         </div>
       </div>
     </div>
@@ -63,7 +81,8 @@
     */
     data() {
       return {
-        files: []
+        files: [],
+        filesMetaData: []
       }
     },
 
@@ -84,24 +103,25 @@
       submitFiles() {
         for (let i = 0; i < this.files.length; i++) {
           let file = this.files[i];
+          let metaData = this.filesMetaData[i];
+          let uploadTask;
 
-          let imageRef = stAlbumsRef.child(file.name);
-
-          let uploadTask = imageRef.put(file);
+          if (!metaData.cancelled) {
+            let imageRef = stAlbumsRef.child(file.name);
+            uploadTask = imageRef.put(file);
+          }
 
           uploadTask.on('state_changed', function (snapshot) {
             // Observe state change events such as progress, pause, and resume
             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload is ' + progress + '% done');
-            switch (snapshot.state) {
-              case firebase.storage.TaskState.PAUSED: // or 'paused'
-                console.log('Upload is paused');
-                break;
-              case firebase.storage.TaskState.RUNNING: // or 'running'
-                console.log('Upload is running');
-                break;
+            metaData.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            metaData.bytesTransferred = snapshot.bytesTransferred;
+            metaData.totalBytes = snapshot.totalBytes;
+
+            if (metaData.cancelled) {
+              uploadTask.cancel();
             }
+
           }, function (error) {
             // Handle unsuccessful uploads
           }, function () {
@@ -112,39 +132,6 @@
           });
 
         }
-
-
-        /*
-          Initialize the form data
-        */
-        // let formData = new FormData();
-        //
-        // /*
-        //   Iteate over any file sent over appending the files
-        //   to the form data.
-        // */
-        // for (var i = 0; i < this.files.length; i++) {
-        //   let file = this.files[i];
-        //
-        //   formData.append('files[' + i + ']', file);
-        // }
-        //
-        // /*
-        //   Make the request to the POST /select-files URL
-        // */
-        // axios.post('/select-files',
-        //   formData,
-        //   {
-        //     headers: {
-        //       'Content-Type': 'multipart/form-data'
-        //     }
-        //   }
-        // ).then(function () {
-        //   console.log('SUCCESS!!');
-        // })
-        //   .catch(function () {
-        //     console.log('FAILURE!!');
-        //   });
       },
 
       /*
@@ -154,9 +141,17 @@
         let uploadedFiles = this.$refs.files.files;
 
         /*
-          Adds the uploaded file to the files array
+          Adds the uploaded file to the files array and metaData array
         */
-        for (var i = 0; i < uploadedFiles.length; i++) {
+        for (let i = 0; i < uploadedFiles.length; i++) {
+          const newMetaData = {
+            progress: 0,
+            bytesTransferred: 0,
+            totalBytes: uploadedFiles[i].size,
+            cancelled: false
+          };
+
+          this.filesMetaData.push(newMetaData);
           this.files.push(uploadedFiles[i]);
         }
       },
@@ -165,7 +160,9 @@
         Removes a select file the user has uploaded
       */
       removeFile(key) {
-        this.files.splice(key, 1);
+        //this.files.splice(key, 1);
+        this.filesMetaData[key].cancelled = true;
+        this.filesMetaData[key].progress = 100;
       }
     }, mounted() {
       ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'].forEach(function (evt) {
