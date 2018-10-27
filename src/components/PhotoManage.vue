@@ -7,12 +7,14 @@
       <div class="row">
         <div class="col-sm-8">
           <div class="align-middle">
-            <label-edit v-bind:text="photoName" v-on:text-updated-blur="textUpdated" v-on:text-updated-enter="textUpdated"></label-edit>
+            <label-edit v-bind:text="photoName" v-on:text-updated-blur="textUpdated"
+                        v-on:text-updated-enter="textUpdated"></label-edit>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="btn-group float-right">
-            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
               <font-awesome-icon icon="list"></font-awesome-icon>
             </button>
             <div class="dropdown-menu">
@@ -40,51 +42,55 @@
 
 
   export default {
-      props: ['albumKey', 'photo', 'photoKey'],
-      components: {
-        fontAwesomeIcon: FontAwesomeIcon,
-        labelEdit: LabelEdit
-      },
-      methods: {
-        textUpdated(text) {
-          let self = this;
-          let ref = dbAlbumPhotosRef(this.albumKey).child(this.photoKey);
-          let update = {displayName: text};
+    props: ['albumKey', 'photo', 'photoKey'],
+    components: {
+      fontAwesomeIcon: FontAwesomeIcon,
+      labelEdit: LabelEdit
+    },
+    methods: {
+      textUpdated(text) {
+        let self = this;
+        let ref = dbAlbumPhotosRef(this.albumKey).child(this.photoKey);
+        let update = {displayName: text};
 
-          ref.update(update, function (error) {
-            if (error) {
-              console.log("Error occurred: " + error.message);
-            } else {
-              self.$set(self.photo, 'displayName', text);
-            }
-          });
-        },
-        deletePhoto() {
-          dbAlbumPhotosRef(this.albumKey).child(this.photoKey).remove();
-          stAlbumPhotosRef(this.albumKey).child(this.photo.name).delete().then(function() {
-            console.log("Photo deleted");
-          }).catch(function(error) {
+        ref.update(update, function (error) {
+          if (error) {
             console.log("Error occurred: " + error.message);
-          });
-
-        },
-        makeCoverPhoto() {
-
-        },
-        makeMarqueePhoto() {
-
-        }
-      },
-      computed: {
-        photoName() {
-          if(this.photo.displayName !== undefined && this.photo.displayName !== null) {
-            return this.photo.displayName
+          } else {
+            self.$set(self.photo, 'displayName', text);
           }
+        });
+      },
+      deletePhoto() {
+        let self = this;
 
-          return this.photo.name
+        dbAlbumPhotosRef(this.albumKey).child(this.photoKey).remove();
+        stAlbumPhotosRef(this.albumKey).child(this.photo.name).delete().then(function () {
+          self.$emit('delete', self.photoKey);
+
+          console.log("Photo deleted");
+        }).catch(function (error) {
+          console.log("Error occurred: " + error.message);
+        });
+
+      },
+      makeCoverPhoto() {
+
+      },
+      makeMarqueePhoto() {
+
+      }
+    },
+    computed: {
+      photoName() {
+        if (this.photo.displayName !== undefined && this.photo.displayName !== null) {
+          return this.photo.displayName
         }
+
+        return this.photo.name
       }
     }
+  }
 </script>
 
 <style scoped>
