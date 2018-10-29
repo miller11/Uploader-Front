@@ -18,9 +18,9 @@
               <font-awesome-icon icon="list"></font-awesome-icon>
             </button>
             <div class="dropdown-menu">
-              <a class="dropdown-item" href="#">Make Cover Photo</a>
+              <a class="dropdown-item" @click="makeCoverPhoto"><font-awesome-icon v-if="coverPhoto" icon="check"></font-awesome-icon> Make Cover Photo</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Add to Marquee</a>
+              <a class="dropdown-item" @click="makeFrontPagePhoto"><font-awesome-icon v-if="frontPagePhoto" icon="check"></font-awesome-icon> Add to Front-Page</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item text-danger" @click="deletePhoto">Delete</a>
             </div>
@@ -33,12 +33,13 @@
 
 <script>
   import {library} from '@fortawesome/fontawesome-svg-core'
-  import {faList} from '@fortawesome/free-solid-svg-icons'
+  import {faList, faCheck} from '@fortawesome/free-solid-svg-icons'
   import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
   import {dbAlbumPhotosRef, stAlbumPhotosRef} from "../firebaseConfig";
   import LabelEdit from 'label-edit'
 
   library.add(faList);
+  library.add(faCheck);
 
 
   export default {
@@ -75,10 +76,31 @@
 
       },
       makeCoverPhoto() {
+        let self = this;
+        let ref = dbAlbumPhotosRef(this.albumKey).child(this.photoKey);
+        let update = {coverPhoto: true};
 
+        ref.update(update, function (error) {
+          if (error) {
+            console.log("Error occurred: " + error.message);
+          } else {
+            self.$set(self.photo, 'coverPhoto', true);
+            self.$emit('coverPhoto', self.photoKey);
+          }
+        });
       },
-      makeMarqueePhoto() {
+      makeFrontPagePhoto() {
+        let self = this;
+        let ref = dbAlbumPhotosRef(this.albumKey).child(this.photoKey);
+        let update = {frontPage: true};
 
+        ref.update(update, function (error) {
+          if (error) {
+            console.log("Error occurred: " + error.message);
+          } else {
+            self.$set(self.photo, 'frontPage', true);
+          }
+        });
       }
     },
     computed: {
@@ -88,6 +110,12 @@
         }
 
         return this.photo.name
+      },
+      coverPhoto() {
+        return this.photo.coverPhoto !== undefined && this.photo.coverPhoto === true;
+      },
+      frontPagePhoto() {
+        return this.photo.frontPage !== undefined && this.photo.frontPage === true;
       }
     }
   }

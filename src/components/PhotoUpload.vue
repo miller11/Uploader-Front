@@ -160,6 +160,7 @@
       },
       saveFileToAlbum(file, fileUrl) {
         let ref = dbAlbumPhotosRef(this.albumKey);
+        let self = this;
 
         let newFile = {
           name: file.name,
@@ -173,6 +174,7 @@
             console.log("Error occurred: " + error.message);
           } else {
             console.log("Album data has been saved.");
+            self.$emit('newPhoto', newFile);
           }
         });
       }

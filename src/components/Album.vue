@@ -36,7 +36,7 @@
       </div>
 
       <div class="col-sm-12 col-md-6">
-        <u-photo-upload :album-key="albumKey"></u-photo-upload>
+        <u-photo-upload :album-key="albumKey" @newPhoto="newPhoto()"></u-photo-upload>
       </div>
 
     </div>
@@ -45,7 +45,7 @@
     <div class="row" v-if="hasPhotos">
       <div class="col-sm-12 col-md-6">
         <u-photo-manage v-for="(photo, key) in album.photos" :key="key" :album-key="albumKey"
-                        :photo="photo" :photo-key="key" @delete="removePhoto($event)"></u-photo-manage>
+                        :photo="photo" :photo-key="key" @delete="removePhoto($event)" @coverPhoto="coverPhoto($event)"></u-photo-manage>
       </div>
     </div>
 
@@ -79,32 +79,48 @@
     },
     methods: {
       saveAlbum() {
-        let data = this;
+        let self = this;
 
-        if (data.albumKey === null) {
-          data.albumKey = dbAlbumsRef.push(data.album, function (error) {
+        if (self.albumKey === null) {
+          self.albumKey = dbAlbumsRef.push(self.album, function (error) {
             if (error) {
-              data.alert.message = "There was an issue saving the album." + error.message;
-              data.alert.warningCountDown = 5;
+              self.alert.message = "There was an issue saving the album." + error.message;
+              self.alert.warningCountDown = 5;
             } else {
-              data.alert.message = "Album has been saved";
-              data.alert.successCountDown = 5;
+              self.alert.message = "Album has been saved";
+              self.alert.successCountDown = 5;
             }
           }).key;
         } else {
-          dbAlbumsRef.child(data.albumKey).update(data.album, function (error) {
+          dbAlbumsRef.child(self.albumKey).update(self.album, function (error) {
             if (error) {
-              data.alert.message = "There was an issue saving the album." + error.message;
-              data.alert.warningCountDown = 5;
+              self.alert.message = "There was an issue saving the album." + error.message;
+              self.alert.warningCountDown = 5;
             } else {
-              data.alert.message = "Album has been saved";
-              data.alert.successCountDown = 5;
+              self.alert.message = "Album has been saved";
+              self.alert.successCountDown = 5;
             }
           });
         }
       },
+      newPhoto() {
+        let self = this;
+
+        dbAlbumsRef.child(self.albumKey).child('photos').once('value').then(function (snapshot) {
+            self.album.photos = snapshot.val();
+        });
+      },
       removePhoto(key) {
         this.$delete(this.album.photos, key);
+      },
+      coverPhoto(key) {
+        for(let lcv in this.album.photos) {
+         if(lcv !== key) {
+           this.$set(this.album.photos[lcv], 'coverPhoto', false);
+         } else {
+           this.$set(this.album.photos[lcv], 'coverPhoto', true);
+         }
+        }
       }
     },
     computed: {
