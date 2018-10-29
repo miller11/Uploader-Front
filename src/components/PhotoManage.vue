@@ -1,7 +1,7 @@
 <template>
   <div class="row pt-1">
     <div class="col-sm-2">
-      <img :src="photo.url" :alt="photo.name" class="img-thumbnail menu-thumbnail">
+      <a @click="modalShow = true"><img :src="photo.url" :alt="photo.name" class="img-thumbnail menu-thumbnail"></a>
     </div>
     <div class="col-sm-10">
       <div class="row">
@@ -28,6 +28,11 @@
         </div>
       </div>
     </div>
+
+    <b-modal v-model="modalShow" :title="photoName" size="lg" :hide-footer="true">
+      <img :src="photo.url" :alt="photo.name" class="img-thumbnail img-fluid">
+    </b-modal>
+
   </div>
 </template>
 
@@ -35,8 +40,11 @@
   import {library} from '@fortawesome/fontawesome-svg-core'
   import {faList, faCheck} from '@fortawesome/free-solid-svg-icons'
   import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
-  import {dbAlbumPhotosRef, stAlbumPhotosRef} from "../firebaseConfig";
+
   import LabelEdit from 'label-edit'
+  import bModal from 'bootstrap-vue/es/components/modal/modal';
+
+  import {dbAlbumPhotosRef, stAlbumPhotosRef} from "../firebaseConfig";
 
   library.add(faList);
   library.add(faCheck);
@@ -44,9 +52,15 @@
 
   export default {
     props: ['albumKey', 'photo', 'photoKey'],
+    data() {
+      return {
+        modalShow: false
+      }
+    },
     components: {
       fontAwesomeIcon: FontAwesomeIcon,
-      labelEdit: LabelEdit
+      labelEdit: LabelEdit,
+      bModal: bModal
     },
     methods: {
       textUpdated(text) {
@@ -125,5 +139,6 @@
   .menu-thumbnail {
     max-height: 5rem;
     min-height: 5rem;
+    cursor: pointer;
   }
 </style>
