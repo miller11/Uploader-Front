@@ -2,7 +2,6 @@
   <div>
     <u-navbar></u-navbar>
 
-
     <router-view></router-view>
 
     <u-footer></u-footer>
@@ -17,6 +16,8 @@
   import 'startbootstrap-modern-business/vendor/jquery/jquery.min'
   import 'startbootstrap-modern-business/vendor/bootstrap/js/bootstrap.bundle.min'
 
+  import {dbAlbumsRef} from "./firebaseConfig";
+
   import Navbar from "./components/Navbar";
   import Footer from './components/Footer';
 
@@ -28,8 +29,10 @@
     },
     data() {
       return {
-        msg: 'Welcome to Your Vue.js App'
       }
+    },
+    created() {
+      this.$store.dispatch('setAlbumsRef', dbAlbumsRef);
     }
   }
 </script>
