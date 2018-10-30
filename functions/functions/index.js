@@ -37,5 +37,14 @@ exports.processSignUp = functions.auth.user().onCreate((user) => {
   }
 });
 
+// Action for new photos
+exports.newPhoto = functions.database.ref('/posts/$albumid').onCreate(event => {
+  let numPhotos = event.data.numChildren();
+
+
+
+  return admin.database().ref("albums/" + req.query.$albumid + "photoCount").set();
+});
+
 
 

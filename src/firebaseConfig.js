@@ -24,7 +24,7 @@ export const stAlbumsRef = storage.ref().child('albums');
 
 
 export function dbAlbumPhotosRef(albumKey) {
-  return dbAlbumsRef.child(albumKey).child('photos');
+  return db.child('photos').child(albumKey);
 }
 
 

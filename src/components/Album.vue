@@ -44,7 +44,7 @@
 
     <div class="row" v-if="hasPhotos">
       <div class="col-sm-12 col-md-6">
-        <u-photo-manage v-for="(photo, key) in album.photos" :key="key" :album-key="albumKey"
+        <u-photo-manage v-for="(photo, key) in photos" :key="key" :album-key="albumKey" :cover-photo-key="album.coverPhoto"
                         :photo="photo" :photo-key="key" @delete="removePhoto($event)" @coverPhoto="coverPhoto($event)"></u-photo-manage>
       </div>
     </div>
@@ -57,7 +57,7 @@
   import PhotoManage from './PhotoManage'
 
   import bAlert from 'bootstrap-vue/es/components/alert/alert';
-  import {dbAlbumsRef} from "../firebaseConfig";
+  import {dbAlbumsRef, dbAlbumPhotosRef} from "../firebaseConfig";
 
 
   export default {
@@ -70,6 +70,7 @@
       return {
         album: {},
         albumKey: this.$route.params.albumKey,
+        photos: [],
         alert: {
           message: '',
           warningCountDown: 0,
@@ -107,25 +108,28 @@
         let self = this;
 
         dbAlbumsRef.child(self.albumKey).child('photos').once('value').then(function (snapshot) {
-            self.album.photos = snapshot.val();
+            self.photos = snapshot.val();
         });
       },
       removePhoto(key) {
-        this.$delete(this.album.photos, key);
+        this.$delete(this.photos, key);
       },
       coverPhoto(key) {
-        for(let lcv in this.album.photos) {
-         if(lcv !== key) {
-           this.$set(this.album.photos[lcv], 'coverPhoto', false);
-         } else {
-           this.$set(this.album.photos[lcv], 'coverPhoto', true);
-         }
-        }
+        dbAlbumsRef.child(self.albumKey).update(self.album, function (error) {
+          if (error) {
+            console.log("Error occurred: " + error.message);
+          } else {
+            self.alert.message = "Album has been saved";
+            self.alert.successCountDown = 5;
+          }
+        });
+
+        this.$set(this.album, 'coverPhoto', key);
       }
     },
     computed: {
       hasPhotos() {
-        return this.albumKey != null && this.album != null && this.album.photos !== undefined;
+        return this.albumKey != null && this.photos != null;
       }
     },
     mounted() {
@@ -134,6 +138,10 @@
       if (self.albumKey != null) {
         dbAlbumsRef.child(self.albumKey).once('value').then(function (snapshot) {
           self.album = snapshot.val();
+        });
+
+        dbAlbumPhotosRef().child(self.albumKey).once('value').then(function (snapshot) {
+          self.photos = snapshot.val();
         });
       }
     }

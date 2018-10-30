@@ -18,7 +18,7 @@
               <font-awesome-icon icon="list"></font-awesome-icon>
             </button>
             <div class="dropdown-menu">
-              <a class="dropdown-item" @click="makeCoverPhoto"><font-awesome-icon v-if="coverPhoto" icon="check"></font-awesome-icon> Make Cover Photo</a>
+              <a class="dropdown-item" @click="makeCoverPhoto"><font-awesome-icon v-if="isCoverPhoto" icon="check"></font-awesome-icon> Make Cover Photo</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" @click="makeFrontPagePhoto"><font-awesome-icon v-if="frontPagePhoto" icon="check"></font-awesome-icon> Add to Front-Page</a>
               <div class="dropdown-divider"></div>
@@ -51,7 +51,7 @@
 
 
   export default {
-    props: ['albumKey', 'photo', 'photoKey'],
+    props: ['albumKey', 'photo', 'photoKey', 'coverPhotoKey'],
     data() {
       return {
         modalShow: false
@@ -125,8 +125,8 @@
 
         return this.photo.name
       },
-      coverPhoto() {
-        return this.photo.coverPhoto !== undefined && this.photo.coverPhoto === true;
+      isCoverPhoto() {
+        return this.photoKey === this.coverPhotoKey;
       },
       frontPagePhoto() {
         return this.photo.frontPage !== undefined && this.photo.frontPage === true;
