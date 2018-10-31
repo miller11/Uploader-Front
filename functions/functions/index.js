@@ -40,7 +40,7 @@ exports.processSignUp = functions.auth.user().onCreate((user) => {
 // Action for new photos
 exports.newPhoto = functions.database.ref('/photos/{albumid}/{photoid}').onCreate((snap, context) => {
 
-  console.log(snap.ref);
+  console.log(snap.key);
 
   snap.ref.parent.once('value').then(function (snapshot) {
     // set the count of photos
@@ -54,7 +54,11 @@ exports.newPhoto = functions.database.ref('/photos/{albumid}/{photoid}').onCreat
   admin.database().ref('/albums/').child(context.params.albumid).once('value').then(function (snapshot) {
     // set a cover photo if none are set
     if(snapshot.val().coverPhoto === undefined || snapshot.val().coverPhoto === null) {
-      admin.database().ref('/albums/').child(context.params.albumid).update({coverPhoto: snap.val()});
+      let value = snap.val();
+      value['.key'] = snap.key;
+
+
+      admin.database().ref('/albums/').child(context.params.albumid).update({coverPhoto: value});
     }
 
     return snapshot.val();
