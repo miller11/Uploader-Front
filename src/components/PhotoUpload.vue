@@ -175,9 +175,12 @@
           if (error) {
             console.log("Error occurred: " + error.message);
           } else {
-            console.log("Album data has been saved.");
-            self.$emit('newPhoto', newFile);
+            console.log("New photo has been saved.");
           }
+        }).then((snap) => {
+          newFile['key'] = snap.key;
+
+          self.$emit('newPhoto', newFile);
         });
       }
     },

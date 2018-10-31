@@ -36,7 +36,7 @@
       </div>
 
       <div class="col-sm-12 col-md-6">
-        <u-photo-upload :album-key="albumKey" @newPhoto="newPhoto()"></u-photo-upload>
+        <u-photo-upload :album-key="albumKey" @newPhoto="newPhoto($event)"></u-photo-upload>
       </div>
 
     </div>
@@ -44,7 +44,7 @@
 
     <div class="row" v-if="hasPhotos">
       <div class="col-sm-12 col-md-6">
-        <u-photo-manage v-for="(photo, key) in photos" :key="key" :album-key="albumKey" :cover-photo-key="album.coverPhoto"
+        <u-photo-manage v-for="(photo, key) in photos" :key="key" :album-key="albumKey" :cover-photo-key="coverPhotoKey"
                         :photo="photo" :photo-key="key" @delete="removePhoto($event)" @coverPhoto="coverPhoto($event)"></u-photo-manage>
       </div>
     </div>
@@ -104,15 +104,32 @@
           });
         }
       },
-      newPhoto() {
+      newPhoto(newPhoto) {
         let self = this;
 
-        dbAlbumPhotosRef(self.albumKey).once('value').then(function (snapshot) {
-          self.photos = snapshot.val();
-        });
+        self.photos.push(newPhoto);
+
+        if(self.album.coverPhoto === undefined || self.album.coverPhoto === null) {
+          self.$set(self.album, 'coverPhoto', newPhoto);
+        }
+
+        if(self.album.photoCount === undefined || self.album.photoCount === null) {
+          self.$set(self.album, 'photoCount', 0);
+        } else {
+          self.album.photoCount++;
+        }
+
+        self.saveAlbum();
       },
       removePhoto(key) {
         this.$delete(this.photos, key);
+
+        if(self.album.coverPhoto.key === key) {
+          self.album.coverPhoto = null;
+        }
+
+        self.album.photoCount--;
+        self.saveAlbum();
       },
       coverPhoto(photo) {
         this.album.coverPhoto = photo;
@@ -130,6 +147,13 @@
     computed: {
       hasPhotos() {
         return this.albumKey != null && this.photos != null;
+      },
+      coverPhotoKey() {
+        if(this.album.coverPhoto === undefined || this.album.coverPhoto === null){
+          return "";
+        } else {
+          return this.album.coverPhoto.key;
+        }
       }
     },
     mounted() {
@@ -141,8 +165,11 @@
         });
 
         dbAlbumPhotosRef(self.albumKey).once('value').then(function (snapshot) {
-          self.photos = snapshot.val();
+          if(snapshot.hasChildren()) {
+            self.photos = snapshot.val();
+          }
         });
+
       }
     }
   }

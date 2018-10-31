@@ -50,23 +50,6 @@ exports.newPhoto = functions.database.ref('/photos/{albumid}/{photoid}').onCreat
     console.log(error);
   });
 
-  // check to see if there is a cover photo yet or not
-  admin.database().ref('/albums/').child(context.params.albumid).once('value').then(function (snapshot) {
-    // set a cover photo if none are set
-    if(snapshot.val().coverPhoto === undefined || snapshot.val().coverPhoto === null) {
-      let value = snap.val();
-      value['.key'] = snap.key;
-
-
-      admin.database().ref('/albums/').child(context.params.albumid).update({coverPhoto: value});
-    }
-
-    return snapshot.val();
-  }).catch(error => {
-    console.log(error);
-  });
-
-
   return null;
 });
 
