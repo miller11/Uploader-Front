@@ -79,7 +79,10 @@
       deletePhoto() {
         let self = this;
 
-        dbAlbumPhotosRef(this.albumKey).child(this.photoKey).remove();
+        dbAlbumPhotosRef(this.albumKey).child(this.photoKey).remove().catch(function (error) {
+          console.log("Error occurred: " + error.message);
+        });
+
         stAlbumPhotosRef(this.albumKey).child(this.photo.name).delete().then(function () {
           self.$emit('delete', self.photoKey);
 

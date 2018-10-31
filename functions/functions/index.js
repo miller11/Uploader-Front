@@ -39,29 +39,54 @@ exports.processSignUp = functions.auth.user().onCreate((user) => {
 
 // Action for new photos
 exports.newPhoto = functions.database.ref('/photos/{albumid}/{photoid}').onCreate((snap, context) => {
+
+  console.log(snap.ref);
+
   snap.ref.parent.once('value').then(function (snapshot) {
+    // set the count of photos
     const count = snapshot.numChildren();
-
-    snap.ref.parent.set({photoCount: count});
-
-    if(snapshot.val().coverPhoto === undefined || snapshot.val().coverPhoto === null) {
-      snap.ref.parent.set({coverPhoto: snap.val()});
-    }
-
-    return snapshot;
+    return admin.database().ref('/albums/').child(context.params.albumid).update({photoCount: count});
   }).catch(error => {
     console.log(error);
   });
 
+  // check to see if there is a cover photo yet or not
+  admin.database().ref('/albums/').child(context.params.albumid).once('value').then(function (snapshot) {
+    // set a cover photo if none are set
+    if(snapshot.val().coverPhoto === undefined || snapshot.val().coverPhoto === null) {
+      admin.database().ref('/albums/').child(context.params.albumid).update({coverPhoto: snap.val()});
+    }
+
+    return snapshot.val();
+  }).catch(error => {
+    console.log(error);
+  });
+
+
   return null;
 });
 
-// exports.deletePhoto = functions.database.ref('/photos/{albumid}/{photoid}').onDelete(async (snap) => {
-//   const counterRef = snap.ref;
-//   const collectionRef = counterRef.parent.child('likes');
-//
-//   // Return the promise from counterRef.set() so our function
-//   // waits for this async event to complete before it exits.
-//   const messagesData = await collectionRef.once('value');
-//   return await counterRef.set(messagesData.numChildren());
-// });
+exports.deletePhoto = functions.database.ref('/photos/{albumid}/{photoid}').onDelete((snap, context) => {
+  snap.ref.parent.once('value').then(function (snapshot) {
+    // set the count of photos
+    const count = snapshot.numChildren();
+    return admin.database().ref('/albums/').child(context.params.albumid).update({photoCount: count});
+  }).catch(error => {
+    console.log(error);
+  });
+
+  // todo check to see if photo being deleted is the cover photo
+  // admin.database().ref('/albums/').child(context.params.albumid).once('value').then(function (snapshot) {
+  //   // set a cover photo if none are set
+  //   if(snapshot.val().coverPhoto.name === snap.val().name) {
+  //     admin.database().ref('/albums/').child(context.params.albumid).update({coverPhoto: snap.val()});
+  //   }
+  //
+  //   return snapshot.val();
+  // }).catch(error => {
+  //   console.log(error);
+  // });
+
+
+  return null;
+});

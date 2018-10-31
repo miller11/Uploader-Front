@@ -114,7 +114,9 @@
       removePhoto(key) {
         this.$delete(this.photos, key);
       },
-      coverPhoto(key) {
+      coverPhoto(photo) {
+        this.album.coverPhoto = photo;
+
         dbAlbumsRef.child(self.albumKey).update(self.album, function (error) {
           if (error) {
             console.log("Error occurred: " + error.message);
@@ -123,8 +125,6 @@
             self.alert.successCountDown = 5;
           }
         });
-
-        this.$set(this.album, 'coverPhoto', key);
       }
     },
     computed: {
