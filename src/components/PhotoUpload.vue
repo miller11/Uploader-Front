@@ -31,7 +31,7 @@
             <span class="font-weight-light">{{ file.name }}</span>
           </div>
           <div class="col-sm-4">
-            <span class="align-bottom text-muted float-right" v-if="filesMetaData[index].progress !== 100"><small>{{ filesMetaData[index].bytesTransferred }} / {{ filesMetaData[index].totalBytes | prettyBytes}}</small></span>
+            <span class="align-bottom text-muted float-right" v-if="filesMetaData[index].progress !== 100"><small>{{ filesMetaData[index].bytesTransferred | prettyBytes}} / {{ filesMetaData[index].totalBytes | prettyBytes}}</small></span>
             <span class="align-bottom text-muted float-right" v-else-if="filesMetaData[index].cancelled"><small>Cancelled</small></span>
             <span class="align-bottom text-muted float-right" v-else><small>Completed</small></span>
           </div>
@@ -113,23 +113,25 @@
             uploadTask = imageRef.put(file);
           }
 
-          uploadTask.on('state_changed', function (snapshot) {
-            // Observe state change events such as progress, pause, and resume
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            metaData.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            metaData.bytesTransferred = snapshot.bytesTransferred;
-            metaData.totalBytes = snapshot.totalBytes;
+          if(uploadTask !== undefined) {
+            uploadTask.on('state_changed', function (snapshot) {
+              // Observe state change events such as progress, pause, and resume
+              // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+              metaData.progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              metaData.bytesTransferred = snapshot.bytesTransferred;
+              metaData.totalBytes = snapshot.totalBytes;
 
-          }, function (error) {
-            // Handle unsuccessful uploads
-          }, function () {
-            // Handle successful uploads on complete
-            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-              console.log('File available at', downloadURL);
+            }, function (error) {
+              // Handle unsuccessful uploads
+            }, function () {
+              // Handle successful uploads on complete
+              uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+                console.log('File available at', downloadURL);
 
-              self.saveFileToAlbum(file, downloadURL);
+                self.saveFileToAlbum(file, downloadURL);
+              });
             });
-          });
+          }
         }
       },
 

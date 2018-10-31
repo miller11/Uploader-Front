@@ -107,8 +107,8 @@
       newPhoto() {
         let self = this;
 
-        dbAlbumsRef.child(self.albumKey).child('photos').once('value').then(function (snapshot) {
-            self.photos = snapshot.val();
+        dbAlbumPhotosRef(self.albumKey).once('value').then(function (snapshot) {
+          self.photos = snapshot.val();
         });
       },
       removePhoto(key) {
@@ -140,7 +140,7 @@
           self.album = snapshot.val();
         });
 
-        dbAlbumPhotosRef().child(self.albumKey).once('value').then(function (snapshot) {
+        dbAlbumPhotosRef(self.albumKey).once('value').then(function (snapshot) {
           self.photos = snapshot.val();
         });
       }

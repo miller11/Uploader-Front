@@ -10,7 +10,7 @@ const functions = require('firebase-functions');
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
-admin.initializeApp();
+admin.initializeApp(functions.config().firebase);
 
 // On sign up.
 exports.processSignUp = functions.auth.user().onCreate((user) => {
@@ -38,13 +38,30 @@ exports.processSignUp = functions.auth.user().onCreate((user) => {
 });
 
 // Action for new photos
-exports.newPhoto = functions.database.ref('/posts/$albumid').onCreate(event => {
-  let numPhotos = event.data.numChildren();
+exports.newPhoto = functions.database.ref('/photos/{albumid}/{photoid}').onCreate((snap, context) => {
+  snap.ref.parent.once('value').then(function (snapshot) {
+    const count = snapshot.numChildren();
 
+    snap.ref.parent.set({photoCount: count});
 
+    if(snapshot.val().coverPhoto === undefined || snapshot.val().coverPhoto === null) {
+      snap.ref.parent.set({coverPhoto: snap.val()});
+    }
 
-  return admin.database().ref("albums/" + req.query.$albumid + "photoCount").set();
+    return snapshot;
+  }).catch(error => {
+    console.log(error);
+  });
+
+  return null;
 });
 
-
-
+// exports.deletePhoto = functions.database.ref('/photos/{albumid}/{photoid}').onDelete(async (snap) => {
+//   const counterRef = snap.ref;
+//   const collectionRef = counterRef.parent.child('likes');
+//
+//   // Return the promise from counterRef.set() so our function
+//   // waits for this async event to complete before it exits.
+//   const messagesData = await collectionRef.once('value');
+//   return await counterRef.set(messagesData.numChildren());
+// });
