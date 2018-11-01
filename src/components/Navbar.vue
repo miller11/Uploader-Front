@@ -81,7 +81,7 @@
             var credential = error.credential;
             // ...
 
-            alert("Sorry " + email + "was a problem signing in. " + errorMessage);
+            console.log("Sorry " + email + " there was a problem signing in. " + errorMessage);
           });
 
         },

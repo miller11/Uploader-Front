@@ -23,6 +23,11 @@
               <input type="text" class="form-control" id="nameInput" v-model="album.name" placeholder="Album name">
             </div>
 
+            <div class="form-group">
+              <label for="descriptionInput">Description</label>
+              <textarea class="form-control" id="descriptionInput" v-model="album.description" placeholder="Description" rows="3"></textarea>
+            </div>
+
             <div class="form-check">
               <input type="checkbox" v-model="album.private" class="form-check-input" id="privateCheck">
               <label class="form-check-label" for="privateCheck">Private</label>
@@ -72,7 +77,7 @@
       return {
         album: {},
         albumKey: this.$route.params.albumKey,
-        photos: [],
+        photos: {},
         alert: {
           message: '',
           warningCountDown: 0,
@@ -84,7 +89,7 @@
       saveAlbum() {
         let self = this;
 
-        if (self.albumKey === null) {
+        if (self.albumKey === undefined || self.albumKey === null) {
           self.albumKey = dbAlbumsRef.push(self.album, function (error) {
             if (error) {
               self.alert.message = "There was an issue saving the album." + error.message;
@@ -116,7 +121,7 @@
         }
 
         if(self.album.photoCount === undefined || self.album.photoCount === null) {
-          self.$set(self.album, 'photoCount', 0);
+          self.$set(self.album, 'photoCount', 1);
         } else {
           self.album.photoCount++;
         }

@@ -46,9 +46,6 @@
       </div>
     </div>
 
-
-    <!--<button @click="submitFiles" class="btn btn-primary">Submit</button>-->
-
   </div>
 </template>
 
