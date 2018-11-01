@@ -178,7 +178,7 @@
             console.log("New photo has been saved.");
           }
         }).then((snap) => {
-          newFile['key'] = snap.key;
+          self.$set(newFile, 'key', snap.key);
 
           self.$emit('newPhoto', newFile);
         });

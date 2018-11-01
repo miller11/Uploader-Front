@@ -13,14 +13,15 @@
         </div>
         <div class="col-sm-4">
           <div class="btn-group float-right">
-            <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+            <button type="button" class="btn btn-outline-dark dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">
               <font-awesome-icon icon="list"></font-awesome-icon>
             </button>
             <div class="dropdown-menu">
               <a class="dropdown-item" @click="makeCoverPhoto"><font-awesome-icon v-if="isCoverPhoto" icon="check"></font-awesome-icon> Make Cover Photo</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" @click="makeFrontPagePhoto"><font-awesome-icon v-if="frontPagePhoto" icon="check"></font-awesome-icon> Add to Front-Page</a>
+              <a class="dropdown-item" @click="toggleFrontPagePhoto" v-if="!frontPagePhoto">Add to Front-Page</a>
+              <a class="dropdown-item" @click="toggleFrontPagePhoto" v-if="frontPagePhoto">Remove from Front-Page</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item text-danger" @click="deletePhoto">Delete</a>
             </div>
@@ -46,8 +47,8 @@
 
   import {dbAlbumPhotosRef, stAlbumPhotosRef} from "../firebaseConfig";
 
-  library.add(faList);
   library.add(faCheck);
+  library.add(faList);
 
 
   export default {
@@ -103,16 +104,22 @@
           }
         });
       },
-      makeFrontPagePhoto() {
+      toggleFrontPagePhoto() {
         let self = this;
         let ref = dbAlbumPhotosRef(this.albumKey).child(this.photoKey);
-        let update = {frontPage: true};
+        let status = true;
+
+        if(self.photo.frontPage !== undefined && self.photo.frontPage === true) {
+          status = false;
+        }
+
+        let update = {frontPage: status};
 
         ref.update(update, function (error) {
           if (error) {
             console.log("Error occurred: " + error.message);
           } else {
-            self.$set(self.photo, 'frontPage', true);
+            self.$set(self.photo, 'frontPage', status);
           }
         });
       }

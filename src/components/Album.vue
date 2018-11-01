@@ -41,6 +41,8 @@
 
     </div>
 
+    <!--<h3 v-for="(photo, key) in photos" :key="key" :album-key="albumKey">{{key}}</h3>-->
+
 
     <div class="row" v-if="hasPhotos">
       <div class="col-sm-12 col-md-6">
@@ -107,7 +109,7 @@
       newPhoto(newPhoto) {
         let self = this;
 
-        self.photos.push(newPhoto);
+        self.$set(self.photos, newPhoto.key, newPhoto);
 
         if(self.album.coverPhoto === undefined || self.album.coverPhoto === null) {
           self.$set(self.album, 'coverPhoto', newPhoto);
@@ -124,15 +126,17 @@
       removePhoto(key) {
         this.$delete(this.photos, key);
 
-        if(self.album.coverPhoto.key === key) {
-          self.album.coverPhoto = null;
+        if(this.album.coverPhoto.key === key) {
+          this.album.coverPhoto = null;
         }
 
-        self.album.photoCount--;
-        self.saveAlbum();
+        this.album.photoCount--;
+        this.saveAlbum();
       },
-      coverPhoto(photo) {
-        this.album.coverPhoto = photo;
+      coverPhoto(photoKey) {
+        let self = this;
+        self.album.coverPhoto = self.photos[photoKey];
+        self.$set(self.album.coverPhoto, 'key', photoKey);
 
         dbAlbumsRef.child(self.albumKey).update(self.album, function (error) {
           if (error) {
