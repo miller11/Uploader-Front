@@ -38,42 +38,32 @@ exports.processSignUp = functions.auth.user().onCreate((user) => {
 });
 
 // Action for new photos
-exports.newPhoto = functions.database.ref('/photos/{albumid}/{photoid}').onCreate((snap, context) => {
+// exports.newPhoto = functions.database.ref('/photos/{albumid}/{photoid}').onCreate((snap, context) => {
+//
+//   console.log(snap.key);
+//
+//   snap.ref.parent.once('value').then(function (snapshot) {
+//     // set the count of photos
+//     const count = snapshot.numChildren();
+//     return admin.database().ref('/albums/').child(context.params.albumid).update({photoCount: count});
+//   }).catch(error => {
+//     console.log(error);
+//   });
+//
+//   return null;
+// });
 
-  console.log(snap.key);
-
-  snap.ref.parent.once('value').then(function (snapshot) {
-    // set the count of photos
-    const count = snapshot.numChildren();
-    return admin.database().ref('/albums/').child(context.params.albumid).update({photoCount: count});
-  }).catch(error => {
-    console.log(error);
-  });
-
-  return null;
-});
-
+// Action for photo delete
 exports.deletePhoto = functions.database.ref('/photos/{albumid}/{photoid}').onDelete((snap, context) => {
-  snap.ref.parent.once('value').then(function (snapshot) {
+
+  snap.ref.once('value').then(function (snapshot) {
     // set the count of photos
-    const count = snapshot.numChildren();
-    return admin.database().ref('/albums/').child(context.params.albumid).update({photoCount: count});
+    if(snapshot.val().frontPage) {
+      return admin.database().ref('/frontPage/').child(context.params.photoid).remove();
+    }
+
   }).catch(error => {
     console.log(error);
   });
 
-  // todo check to see if photo being deleted is the cover photo
-  // admin.database().ref('/albums/').child(context.params.albumid).once('value').then(function (snapshot) {
-  //   // set a cover photo if none are set
-  //   if(snapshot.val().coverPhoto.name === snap.val().name) {
-  //     admin.database().ref('/albums/').child(context.params.albumid).update({coverPhoto: snap.val()});
-  //   }
-  //
-  //   return snapshot.val();
-  // }).catch(error => {
-  //   console.log(error);
-  // });
-
-
-  return null;
 });
