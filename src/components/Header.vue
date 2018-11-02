@@ -7,27 +7,18 @@
         <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
       </ol>
       <div class="carousel-inner" role="listbox">
-        <!-- Slide One - Set the background image for this slide in the line below -->
-        <div class="carousel-item active" style="background-image: url('https://storage.googleapis.com/www.ic-miller.net/images/Big%20Stopper.jpg')">
+        <!-- Slides -->
+
+
+        <div class="carousel-item" :class="{ 'active' : index === 0}" v-for="(image, key, index) in photos" :key="key"
+             v-bind:style="{ backgroundImage: 'url(' + image.url + ')' }">
           <div class="carousel-caption d-none d-md-block">
             <!--<h3>First Slide</h3>-->
-            <p>Waimea bay</p>
+            <p class="sr-only">{{ image.name }}</p>
           </div>
         </div>
-        <!-- Slide Two - Set the background image for this slide in the line below -->
-        <div class="carousel-item" style="background-image: url('https://storage.googleapis.com/www.ic-miller.net/images/Colton-Butterfly.jpg')">
-          <div class="carousel-caption d-none d-md-block">
-            <!--<h3>Second Slide</h3>-->
-            <p>Colton swimming butterfly</p>
-          </div>
-        </div>
-        <!-- Slide Three - Set the background image for this slide in the line below -->
-        <div class="carousel-item" style="background-image: url('https://storage.googleapis.com/www.ic-miller.net/images/Milky%20Way-XL.jpg')">
-          <div class="carousel-caption d-none d-md-block">
-            <!--<h3>Third Slide</h3>-->
-            <p>Milky way picture taken in Hawaii</p>
-          </div>
-        </div>
+
+
       </div>
       <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -42,9 +33,24 @@
 </template>
 
 <script>
-    export default {
-        name: "Header"
+  import {dbFrontPageRef} from "../firebaseConfig";
+
+  export default {
+    data() {
+      return {
+        photos: []
+      }
+    },
+    mounted() {
+      let self = this;
+
+      dbFrontPageRef.once('value').then(function (snapshot) {
+        if (snapshot.hasChildren()) {
+          self.photos = snapshot.val();
+        }
+      });
     }
+  }
 </script>
 
 <style scoped>

@@ -11,22 +11,27 @@ var config = {
 };
 
 const firebaseApp = Firebase.initializeApp(config);
+
+// Authentication stuff
 export const provider = new Firebase.auth.GoogleAuthProvider();
 
+// Database stuff
 const db = firebaseApp.database();
+
 export const dbAlbumsRef = db.ref('albums');
-
-const storage = Firebase.storage();
-
-export const stAlbumsRef = storage.ref().child('albums');
-
-
 
 
 export function dbAlbumPhotosRef(albumKey) {
   return db.ref('photos').child(albumKey);
 }
 
+export const dbFrontPageRef = db.ref().child('frontPage');
+
+
+// Storage stuff
+const storage = Firebase.storage();
+
+export const stAlbumsRef = storage.ref().child('albums');
 
 export function stAlbumPhotosRef(albumKey) {
   return stAlbumsRef.child(albumKey);

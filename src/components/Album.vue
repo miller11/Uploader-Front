@@ -30,7 +30,7 @@
                   style="text-shadow: 1px 1px 2px #333;"
                   controls
                   indicators
-                  :interval="2000">
+                  :interval="5000">
         <b-carousel-slide v-for="(photo, key) in photos" :key="key" :img-src="photo.url"></b-carousel-slide>
       </b-carousel>
     </b-modal>

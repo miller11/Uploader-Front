@@ -45,7 +45,7 @@
   import LabelEdit from 'label-edit'
   import bModal from 'bootstrap-vue/es/components/modal/modal';
 
-  import {dbAlbumPhotosRef, stAlbumPhotosRef} from "../firebaseConfig";
+  import {dbAlbumPhotosRef, dbFrontPageRef, stAlbumPhotosRef} from "../firebaseConfig";
 
   library.add(faCheck);
   library.add(faList);
@@ -122,6 +122,13 @@
             self.$set(self.photo, 'frontPage', status);
           }
         });
+
+        if(status) {
+          dbFrontPageRef.push(self.photo)
+        } else {
+          dbFrontPageRef.child(self.photoKey).remove();
+        }
+
       }
     },
     computed: {
