@@ -8,7 +8,7 @@
       <h1 class="my-4">Welcome to Bob's Photos</h1>
 
       <div class="row">
-        <u-album v-for="(album) in albums" :key="album['.key']" :album-key="album['.key']" :album="album"></u-album>
+        <u-album v-for="(album) in albums" :key="album['.key']" :album-key="album['.key']" :album="album" :edit-screen="false"></u-album>
       </div>
       <!-- /.row -->
 
