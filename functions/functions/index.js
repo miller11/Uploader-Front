@@ -58,12 +58,14 @@ exports.deletePhoto = functions.database.ref('/photos/{albumid}/{photoid}').onDe
 
   snap.ref.once('value').then(function (snapshot) {
     // set the count of photos
-    if(snapshot.val().frontPage) {
+    if (snapshot.val().frontPage) {
       return admin.database().ref('/frontPage/').child(context.params.photoid).remove();
     }
 
+    return null;
   }).catch(error => {
     console.log(error);
   });
 
+  return null;
 });
