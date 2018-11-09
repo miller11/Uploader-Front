@@ -42,6 +42,19 @@
   Firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
       store.dispatch('setUser', user);
+
+      Firebase.auth().currentUser.getIdTokenResult()
+        .then((idTokenResult) => {
+          // Confirm the user is an Admin.
+          if (!!idTokenResult.claims.photoOwner) {
+            // Show admin UI.
+            store.dispatch('setIsPhotoOwner', true);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
     } else {
       store.dispatch('setUser', null);
       store.dispatch('setIsPhotoOwner', false);
@@ -58,17 +71,7 @@
             // The signed-in user info.
             var user = result.user;
             // ...
-            Firebase.auth().currentUser.getIdTokenResult()
-              .then((idTokenResult) => {
-                // Confirm the user is an Admin.
-                if (!!idTokenResult.claims.admin) {
-                  // Show admin UI.
-                  store.dispatch('setIsPhotoOwner', true);
-                }
-              })
-              .catch((error) => {
-                console.log(error);
-              });
+
 
 
           }).catch(function(error) {
