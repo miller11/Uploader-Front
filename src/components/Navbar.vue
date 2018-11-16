@@ -2,7 +2,7 @@
   <!-- Navigation -->
   <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="index.html">Uploader</a>
+      <a class="navbar-brand" href="index.html">Bob's Photos</a>
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -42,6 +42,19 @@
   Firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
       store.dispatch('setUser', user);
+
+      Firebase.auth().currentUser.getIdTokenResult()
+        .then((idTokenResult) => {
+          // Confirm the user is an Admin.
+          if (!!idTokenResult.claims.photoOwner) {
+            // Show admin UI.
+            store.dispatch('setIsPhotoOwner', true);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
     } else {
       store.dispatch('setUser', null);
       store.dispatch('setIsPhotoOwner', false);
@@ -58,17 +71,7 @@
             // The signed-in user info.
             var user = result.user;
             // ...
-            Firebase.auth().currentUser.getIdTokenResult()
-              .then((idTokenResult) => {
-                // Confirm the user is an Admin.
-                if (!!idTokenResult.claims.admin) {
-                  // Show admin UI.
-                  store.dispatch('setIsPhotoOwner', true);
-                }
-              })
-              .catch((error) => {
-                console.log(error);
-              });
+
 
 
           }).catch(function(error) {

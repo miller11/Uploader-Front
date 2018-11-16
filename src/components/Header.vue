@@ -10,7 +10,7 @@
         <!-- Slides -->
 
 
-        <div class="carousel-item" :class="{ 'active' : index === 0}" v-for="(image, key, index) in photos" :key="key"
+        <div class="carousel-item" :class="{ 'active' : index === 0}" v-for="(image, key, index) in spotLightPhotos" :key="key"
              v-bind:style="{ backgroundImage: 'url(' + image.url + ')' }">
           <div class="carousel-caption d-none d-md-block">
             <!--<h3>First Slide</h3>-->
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-  import {dbFrontPageRef} from "../firebaseConfig";
+  import { mapGetters } from 'vuex'
 
   export default {
     data() {
@@ -41,14 +41,10 @@
         photos: []
       }
     },
-    mounted() {
-      let self = this;
-
-      dbFrontPageRef.once('value').then(function (snapshot) {
-        if (snapshot.hasChildren()) {
-          self.photos = snapshot.val();
-        }
-      });
+    computed: {
+      ...mapGetters([
+        'spotLightPhotos'
+      ])
     }
   }
 </script>

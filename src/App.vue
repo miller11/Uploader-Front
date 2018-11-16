@@ -16,7 +16,7 @@
   import 'startbootstrap-modern-business/vendor/jquery/jquery.min'
   import 'startbootstrap-modern-business/vendor/bootstrap/js/bootstrap.bundle.min'
 
-  import {dbAlbumsRef} from "./firebaseConfig";
+  import {dbAlbumsRef, dbSpotLightPhotosRef} from "./firebaseConfig";
 
   import Navbar from "./components/Navbar";
   import Footer from './components/Footer';
@@ -33,6 +33,7 @@
     },
     created() {
       this.$store.dispatch('setAlbumsRef', dbAlbumsRef);
+      this.$store.dispatch('setSpotLightPhotosRef', dbSpotLightPhotosRef);
     }
   }
 </script>

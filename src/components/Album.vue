@@ -17,7 +17,7 @@
           </a>
         </div>
 
-        <div class="float-right p-1">
+        <div class="float-left p-1">
           <router-link :to="{name: 'albumLink', params: { albumKey: albumKey }}">
             <font-awesome-icon icon="wrench"></font-awesome-icon>
           </router-link>
