@@ -27,6 +27,8 @@ export function dbAlbumPhotosRef(albumKey) {
 
 export const dbFrontPageRef = db.ref().child('frontPage');
 
+export const dbSpotLightPhotosRef = db.ref().child('spotLightPhotos');
+
 
 // Storage stuff
 const storage = Firebase.storage();
