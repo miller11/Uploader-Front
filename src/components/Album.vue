@@ -1,7 +1,7 @@
 <template>
   <div class="col-lg-4 col-sm-6 portfolio-item">
     <div class="card h-100">
-      <a @click="showModal"><img :src="album.coverPhoto.url" :alt="album.coverPhoto.name"
+      <a @click="showModal" v-bind:style="{ backgroundImage: 'url(' + album.coverPhoto.url + ')' }" :alt="album.coverPhoto.name"
                                  class="card-img-top cover-photo"></a>
       <div class="card-body">
         <h4 class="card-title">
@@ -132,8 +132,14 @@
 
 <style scoped>
   .cover-photo {
+    position: relative;
+    float: left;
+    width:  100%;
+    height: 15rem;
+    background: no-repeat 50% 50%;
+    object-fit:scale-down;
+    background-size:     cover;
     cursor: pointer;
-    height: 50%;
   }
 
 </style>
