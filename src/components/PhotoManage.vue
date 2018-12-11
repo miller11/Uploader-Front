@@ -109,22 +109,11 @@
       },
       toggleFrontPagePhoto() {
         let self = this;
-        let ref = dbAlbumPhotosRef(this.albumKey).child(this.photoKey);
         let status = true;
 
         if(self.photo.frontPage !== undefined && self.photo.frontPage === true) {
           status = false;
         }
-
-        let update = {frontPage: status};
-
-        ref.update(update, function (error) {
-          if (error) {
-            console.log("Error occurred: " + error.message);
-          } else {
-            self.$set(self.photo, 'frontPage', status);
-          }
-        });
 
         if(status) {
           self.$set(self.photo, 'key', self.photoKey);
