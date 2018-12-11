@@ -25,8 +25,6 @@ export function dbAlbumPhotosRef(albumKey) {
   return db.ref('photos').child(albumKey);
 }
 
-export const dbFrontPageRef = db.ref().child('frontPage');
-
 export const dbSpotLightPhotosRef = db.ref().child('spotLightPhotos');
 
 

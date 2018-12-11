@@ -42,13 +42,16 @@
   import {faList, faCheck} from '@fortawesome/free-solid-svg-icons'
   import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
+  library.add(faCheck);
+  library.add(faList);
+
   import LabelEdit from 'label-edit'
   import bModal from 'bootstrap-vue/es/components/modal/modal';
 
-  import {dbAlbumPhotosRef, dbFrontPageRef, stAlbumPhotosRef} from "../firebaseConfig";
+  import {dbAlbumPhotosRef, dbSpotLightPhotosRef, stAlbumPhotosRef} from "../firebaseConfig";
 
-  library.add(faCheck);
-  library.add(faList);
+  import { mapGetters } from 'vuex'
+
 
 
   export default {
@@ -124,14 +127,18 @@
         });
 
         if(status) {
-          dbFrontPageRef.push(self.photo)
+          self.$set(self.photo, 'key', self.photoKey);
+          dbSpotLightPhotosRef.push(self.photo)
         } else {
-          dbFrontPageRef.child(self.photoKey).remove();
+          dbSpotLightPhotosRef.child(self.photoKey).remove();
         }
 
       }
     },
     computed: {
+      ...mapGetters([
+        'spotLightPhotos'
+      ]),
       photoName() {
         if (this.photo.displayName !== undefined && this.photo.displayName !== null) {
           return this.photo.displayName
@@ -143,7 +150,7 @@
         return this.photoKey === this.coverPhotoKey;
       },
       frontPagePhoto() {
-        return this.photo.frontPage !== undefined && this.photo.frontPage === true;
+        return this.spotLightPhotos.filter(e => e['key'] === this.photoKey).length > 0;
       }
     }
   }
