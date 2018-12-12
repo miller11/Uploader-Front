@@ -33,6 +33,8 @@
                   :interval="5000">
         <b-carousel-slide v-for="(photo, key) in photos" :key="key" :img-src="photo.url"></b-carousel-slide>
       </b-carousel>
+
+
     </b-modal>
   </div>
 </template>
