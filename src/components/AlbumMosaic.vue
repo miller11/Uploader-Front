@@ -64,7 +64,7 @@
         alert("Plus 1");
       },
       getUpVotes(src) {
-        return Object.entries(this.dbPhotos).find(p => p.src === src).upVotes;
+        return Object.entries(this.dbPhotos).find(p => p[1].src === src).upVotes;
       }
     }
   }
