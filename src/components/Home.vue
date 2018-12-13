@@ -12,6 +12,10 @@
       </div>
       <!-- /.row -->
 
+      <div class="row">
+        <hr>
+      </div>
+
       <!-- Features Section -->
       <div class="row">
         <div class="col-lg-6">

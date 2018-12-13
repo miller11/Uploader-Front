@@ -134,10 +134,11 @@
                   img.onload = function() {
                     let newFile = {
                       name: file.name,
+                      upVotes: 0,
                       size: file.size,
                       type: file.type,
-                      height: img.height,
-                      width: img.width,
+                      h: img.height,
+                      w: img.width,
                       src: downloadURL
                     };
 

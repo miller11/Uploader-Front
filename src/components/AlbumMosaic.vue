@@ -3,9 +3,12 @@
     <h2>{{ albumName }}</h2>
 
     <div v-masonry transition-duration="0.3s" item-selector=".item" class="preview-img-list">
-      <div v-masonry-tile class="item" v-for="(photo, index) in photos">
-        <div class="card" style="width: 18rem;">
-          <img class="card-img-top preview-img-item" :src="photo.src" :alt="photo.name" @click="$photoswipe.open(index, photos)">
+      <div v-masonry-tile class="item" v-for="(photo, index) in photoList">
+        <div class="card img-wrapper" style="width: 18rem;">
+           <img class="card-img-top preview-img-item" :src="photo.src" :alt="photo.name" >
+            <div class="img-overlay" @click.prevent="$photoswipe.open(index, photoList)">
+              <button type="button" class="btn btn-light" @click.stop="plusOne"><font-awesome-icon icon="arrow-alt-circle-up"></font-awesome-icon> {{ getUpVotes(photo.src) }}</button>
+            </div>
         </div>
       </div>
     </div>
@@ -19,6 +22,12 @@
 
   Vue.use(VueMasonryPlugin);
 
+  import {library} from '@fortawesome/fontawesome-svg-core'
+  import {faArrowAltCircleUp} from '@fortawesome/free-solid-svg-icons'
+  import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
+
+  library.add(faArrowAltCircleUp);
+
   import {dbAlbumPhotosRef} from "../firebaseConfig";
 
 
@@ -26,8 +35,12 @@
     props: ['albumKey', 'albumName'],
     data() {
       return {
-        photos: []
+        photoList: [],
+        dbPhotos: []
       }
+    },
+    components: {
+      fontAwesomeIcon: FontAwesomeIcon
     },
     mounted: function () {
       let self = this;
@@ -35,14 +48,24 @@
       dbAlbumPhotosRef(self.albumKey).once('value').then(function (snapshot) {
         if (snapshot.hasChildren()) {
           for (let key in snapshot.val()) {
-            self.photos.push({
+            self.photoList.push({
               src: snapshot.val()[key]['src'],
-              w: snapshot.val()[key]['width'],
-              h: snapshot.val()[key]['height']
-            })
+              w: snapshot.val()[key]['w'],
+              h: snapshot.val()[key]['h']
+            });
+
+            self.dbPhotos = snapshot.val();
           }
         }
       });
+    },
+    methods: {
+      plusOne() {
+        alert("Plus 1");
+      },
+      getUpVotes(src) {
+        return Object.entries(this.dbPhotos).find(p => p.src === src).upVotes;
+      }
     }
   }
 </script>
@@ -55,7 +78,29 @@
     position: relative;
   }
 
-  .preview-img-item{
+  .preview-img-item {
     cursor: pointer;
+  }
+
+  .img-wrapper {
+    position: relative;
+  }
+
+  .img-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: right;
+    margin-right: 2%;
+    cursor: pointer;
+  }
+
+  .img-overlay:before {
+    content: ' ';
+    display: block;
+     /*adjust 'height' to position overlay content vertically */
+    height: 82%;
   }
 </style>
