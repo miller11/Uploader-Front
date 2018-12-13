@@ -28,6 +28,8 @@
     "url-parse": "^1.4.3",
     "vue": "^2.5.11",
     "vue-cli": "^2.9.3",
+    "vue-masonry": "^0.11.7",
+    "vue-photoswipe": "^1.0.3",
     "vue-router": "^3.0.1",
     "vuefire": "^1.4.5",
     "vuex": "^3.0.1",

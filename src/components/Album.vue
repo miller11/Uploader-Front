@@ -5,7 +5,7 @@
                                  class="card-img-top cover-photo"></a>
       <div class="card-body">
         <h4 class="card-title">
-          <router-link :to="{name: 'albumsViewLink', params: { albumKey: albumKey }}">
+          <router-link :to="{name: 'albumsViewLink', params: { albumKey: albumKey, albumName: album.name }}">
             <a class="btn-link">{{ album.name }}</a>
           </router-link>
         </h4>
