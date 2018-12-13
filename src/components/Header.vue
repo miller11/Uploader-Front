@@ -11,7 +11,7 @@
 
 
         <div class="carousel-item" :class="{ 'active' : key === 0}" v-for="(image, key, index) in spotLightPhotos" :key="key"
-             v-bind:style="{ backgroundImage: 'url(' + image.url + ')' }">
+             v-bind:style="{ backgroundImage: 'url(' + image.src + ')' }">
           <div class="carousel-caption d-none d-md-block">
             <!--<h3>First Slide</h3>-->
             <p class="sr-only">{{ image.name }}</p>

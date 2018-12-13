@@ -125,7 +125,30 @@
               uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
                 console.log('File available at', downloadURL);
 
-                self.saveFileToAlbum(file, downloadURL);
+                // load file and calculate dimensions
+                let fr = new FileReader;
+
+                fr.onload = function() { // file is loaded
+                  let img = new Image;
+
+                  img.onload = function() {
+                    let newFile = {
+                      name: file.name,
+                      size: file.size,
+                      type: file.type,
+                      height: img.height,
+                      width: img.width,
+                      src: downloadURL
+                    };
+
+                    self.saveFileToAlbum(newFile); // save to database
+                  };
+
+                  img.src = fr.result; // is the data URL because called with readAsDataURL
+                };
+
+                fr.readAsDataURL(file);
+
               });
             });
           }
@@ -157,16 +180,9 @@
 
         this.filesMetaData.push(newMetaData);
       },
-      saveFileToAlbum(file, fileUrl) {
+      saveFileToAlbum(newFile) {
         let ref = dbAlbumPhotosRef(this.albumKey);
         let self = this;
-
-        let newFile = {
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          url: fileUrl
-        };
 
         ref.push(newFile, function(error) {
           if (error) {
@@ -179,6 +195,7 @@
 
           self.$emit('newPhoto', newFile);
         });
+
       }
     },
     mounted() {

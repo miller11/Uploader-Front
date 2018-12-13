@@ -1,7 +1,7 @@
 <template>
   <div class="row pt-1">
     <div class="col-sm-2">
-      <a @click="modalShow = true"><img :src="photo.url" :alt="photo.name" class="img-thumbnail menu-thumbnail"></a>
+      <a @click="modalShow = true"><img :src="photo.src" :alt="photo.name" class="img-thumbnail menu-thumbnail"></a>
     </div>
     <div class="col-sm-10">
       <div class="row">
@@ -31,7 +31,7 @@
     </div>
 
     <b-modal v-model="modalShow" :title="photoName" size="lg" :hide-footer="true">
-      <img :src="photo.url" :alt="photo.name" class="img-thumbnail img-fluid">
+      <img :src="photo.src" :alt="photo.name" class="img-thumbnail img-fluid">
     </b-modal>
 
   </div>

@@ -182,7 +182,6 @@
             self.photos = snapshot.val();
           }
         });
-
       }
     }
   }

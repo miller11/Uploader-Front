@@ -5,7 +5,7 @@
   <div v-masonry transition-duration="0.3s" item-selector=".item">
     <div v-masonry-tile class="item" v-for="(photo, index) in photos">
       <div class="card" style="width: 18rem;">
-        <img class="card-img-top" :src="photo.url" :alt="photo.name" @click.prevent="">
+        <img class="card-img-top" :src="photo.src" :alt="photo.name" @click.prevent="">
       </div>
     </div>
   </div>

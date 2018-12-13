@@ -1,7 +1,7 @@
 <template>
   <div class="col-lg-4 col-sm-6 portfolio-item">
     <div class="card h-100">
-      <a @click="showModal" v-bind:style="{ backgroundImage: 'url(' + album.coverPhoto.url + ')' }" :alt="album.coverPhoto.name"
+      <a @click="showModal" v-bind:style="{ backgroundImage: 'url(' + album.coverPhoto.src + ')' }" :alt="album.coverPhoto.name"
                                  class="card-img-top cover-photo"></a>
       <div class="card-body">
         <h4 class="card-title">
@@ -33,7 +33,7 @@
                   controls
                   indicators
                   :interval="5000">
-        <b-carousel-slide v-for="(photo, key) in photos" :key="key" :img-src="photo.url"></b-carousel-slide>
+        <b-carousel-slide v-for="(photo, key) in photos" :key="key" :img-src="photo.src"></b-carousel-slide>
       </b-carousel>
 
 
