@@ -5,7 +5,9 @@
                                  class="card-img-top cover-photo"></a>
       <div class="card-body">
         <h4 class="card-title">
-          <a href="" class="btn-link" @click.prevent="showModal">{{ album.name }}</a>
+          <router-link :to="{name: 'albumsViewLink', params: { albumKey: albumKey }}">
+            <a class="btn-link">{{ album.name }}</a>
+          </router-link>
         </h4>
         <p class="card-text">{{ album.description }} </p>
       </div>
