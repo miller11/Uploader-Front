@@ -1,15 +1,15 @@
 <template>
-<div class="container full-page">
-  <h2>{{ albumName }}</h2>
+  <div class="container full-page">
+    <h2>{{ albumName }}</h2>
 
-  <div v-masonry transition-duration="0.3s" item-selector=".item">
-    <div v-masonry-tile class="item" v-for="(photo, index) in photos">
-      <div class="card" style="width: 18rem;">
-        <img class="card-img-top" :src="photo.src" :alt="photo.name" @click.prevent="">
+    <div v-masonry transition-duration="0.3s" item-selector=".item" class="preview-img-list">
+      <div v-masonry-tile class="item" v-for="(photo, index) in photos">
+        <div class="card" style="width: 18rem;">
+          <img class="card-img-top preview-img-item" :src="photo.src" :alt="photo.name" @click="$photoswipe.open(index, photos)">
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 </template>
 
@@ -29,27 +29,20 @@
         photos: []
       }
     },
-    mounted: function() {
+    mounted: function () {
       let self = this;
 
       dbAlbumPhotosRef(self.albumKey).once('value').then(function (snapshot) {
         if (snapshot.hasChildren()) {
-          self.photos = snapshot.val();
+          for (let key in snapshot.val()) {
+            self.photos.push({
+              src: snapshot.val()[key]['src'],
+              w: snapshot.val()[key]['width'],
+              h: snapshot.val()[key]['height']
+            })
+          }
         }
       });
-    },
-    methods: {
-      launchModal() {
-        let self = this;
-
-        dbAlbumPhotosRef(this.albumKey).once('value').then(function (snapshot) {
-          if (snapshot.hasChildren()) {
-            self.photos = snapshot.val();
-          }
-        });
-
-        this.modalShow = true;
-      }
     }
   }
 </script>
@@ -60,5 +53,9 @@
     height: 100%;
     min-height: 100vh;
     position: relative;
+  }
+
+  .preview-img-item{
+    cursor: pointer;
   }
 </style>
