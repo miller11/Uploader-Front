@@ -111,7 +111,7 @@
         let self = this;
         let status = true;
 
-        if(self.photo.frontPage !== undefined && self.photo.frontPage === true) {
+        if(self.frontPagePhoto) {
           status = false;
         }
 
@@ -119,7 +119,13 @@
           self.$set(self.photo, 'key', self.photoKey);
           dbSpotLightPhotosRef.push(self.photo)
         } else {
-          dbSpotLightPhotosRef.child(self.photoKey).remove();
+          dbSpotLightPhotosRef.orderByChild('key').equalTo(this.photoKey)
+            .once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+              //remove each child
+              dbSpotLightPhotosRef.child(childSnapshot.key).remove();
+            });
+          });
         }
 
       }
