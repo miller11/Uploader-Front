@@ -7,7 +7,7 @@
         <div class="card img-wrapper" style="width: 18rem;">
            <img class="card-img-top preview-img-item" :src="photo.src" :alt="photo.name" >
             <div class="img-overlay" @click.prevent="$photoswipe.open(index, photoList)">
-              <button type="button" class="btn btn-light" @click.stop="plusOne"><font-awesome-icon icon="arrow-alt-circle-up"></font-awesome-icon> {{ getUpVotes(photo.src) }}</button>
+              <button type="button" class="btn btn-light" @click.stop="upVote(photo.src)"><font-awesome-icon icon="arrow-alt-circle-up"></font-awesome-icon> {{ getPhoto(photo.src).upVotes }}</button>
             </div>
         </div>
       </div>
@@ -45,7 +45,7 @@
     mounted: function () {
       let self = this;
 
-      dbAlbumPhotosRef(self.albumKey).once('value').then(function (snapshot) {
+      dbAlbumPhotosRef(self.albumKey).orderByChild('upVotes').once('value').then(function (snapshot) {
         if (snapshot.hasChildren()) {
           for (let key in snapshot.val()) {
             self.photoList.push({
@@ -60,11 +60,32 @@
       });
     },
     methods: {
-      plusOne() {
-        alert("Plus 1");
+      upVote(src) {
+        let self = this;
+
+        const photoKey = Object.entries(self.dbPhotos).find(p => p[1].src === src)[0];
+
+        let photoUpVoteRef = dbAlbumPhotosRef(self.albumKey).child(photoKey).child('upVotes');
+
+        photoUpVoteRef.transaction(function(upVotes) {
+          upVotes = upVotes + 1;
+
+          return upVotes || 0;
+        });
+
+        self.getDbPhotos();
       },
-      getUpVotes(src) {
-        return Object.entries(this.dbPhotos).find(p => p[1].src === src).upVotes;
+      getPhoto(src) {
+        return Object.entries(this.dbPhotos).find(p => p[1].src === src)[1];
+      },
+      getDbPhotos() {
+        let self = this;
+
+        dbAlbumPhotosRef(self.albumKey).orderByChild('upVotes').once('value').then(function (snapshot) {
+          if (snapshot.hasChildren()) {
+            self.dbPhotos = snapshot.val();
+          }
+        });
       }
     }
   }
