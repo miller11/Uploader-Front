@@ -157,4 +157,8 @@
     min-height: 5rem;
     cursor: pointer;
   }
+
+  .dropdown-item {
+    cursor: pointer;
+  }
 </style>
