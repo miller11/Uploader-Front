@@ -31,6 +31,7 @@
     "vue-masonry": "^0.11.7",
     "vue-photoswipe": "^1.0.3",
     "vue-router": "^3.0.1",
+    "vuedraggable": "^2.17.0",
     "vuefire": "^1.4.5",
     "vuex": "^3.0.1",
     "vuexfire": "^2.3.1"

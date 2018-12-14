@@ -1,9 +1,10 @@
 <template>
-    
+  <draggable v-model='spotLightPhotos'></draggable>
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import {store} from '../store/store';
+
 
   export default {
     data() {
@@ -12,9 +13,14 @@
       }
     },
     computed: {
-      ...mapGetters([
-        'spotLightPhotos'
-      ])
+      spotLightPhotos: {
+        get() {
+          return this.$store.state.spotLightPhotos
+        },
+        set(value) {
+          this.$store.commit('spotLightPhotos', value)
+        }
+      }
     }
   }
 </script>
