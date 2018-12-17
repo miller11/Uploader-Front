@@ -1,5 +1,10 @@
 <template>
-  <draggable v-model='spotLightPhotos'></draggable>
+  <draggable v-model='spotLightPhotos'>
+    <div v-for="element in spotLightPhotos" :key="element.id" class="item">
+      {{element.name}}
+    </div>
+    <button slot="header" @click="addPeople">Add</button>
+  </draggable>
 </template>
 
 <script>
