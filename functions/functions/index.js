@@ -16,7 +16,7 @@ admin.initializeApp(functions.config().firebase);
 exports.processSignUp = functions.auth.user().onCreate((user) => {
   // Check if user meets role criteria.
   if (user.email &&
-    user.email.indexOf('ross.h.miller@gmail.com') !== -1) {
+    (user.email.indexOf('ross.h.miller@gmail.com') !== -1|| user.email.indexOf('bobm1627@gmail.com') !== -1)) {
     const customClaims = {
       admin: true,
       photoOwner: true
@@ -57,10 +57,14 @@ exports.processSignUp = functions.auth.user().onCreate((user) => {
 exports.deletePhoto = functions.database.ref('/photos/{albumid}/{photoid}').onDelete((snap, context) => {
 
   snap.ref.once('value').then(function (snapshot) {
-    // set the count of photos
-    if (snapshot.val().frontPage) {
-      return admin.database().ref('/frontPage/').child(context.params.photoid).remove();
-    }
+
+    admin.database().ref('spotLightPhotos/').equalTo(context.params.photoid)
+      .once('value').then(function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+        //remove each child
+        admin.database().ref('spotLightPhotos/').child(childSnapshot.key).remove();
+      });
+    });
 
     return null;
   }).catch(error => {
