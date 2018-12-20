@@ -1,7 +1,11 @@
 <template>
   <div class="container padding full-page">
     <div class="row">
-      <div class="col-sm-2 offset-10">
+      <div class="col-sm-2">
+        <router-link :to="{name: 'spotlightManage'}"><button class="btn btn-primary">Spotlight Photos</button></router-link>
+      </div>
+
+      <div class="col-sm-2 offset-8">
         <router-link :to="{name: 'albumLinkNew', params: { albumKey: null }}"><a href="" class="btn btn-success float-right">+ New
           Album</a></router-link>
       </div>
@@ -50,5 +54,9 @@
     height: 100%;
     min-height: 100vh;
     position: relative;
+  }
+
+  .white-text {
+    color: white;
   }
 </style>

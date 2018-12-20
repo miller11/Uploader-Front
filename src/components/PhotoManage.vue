@@ -117,6 +117,7 @@
 
         if(status) {
           self.$set(self.photo, 'key', self.photoKey);
+          self.$set(self.photo, 'date', Date.now());
           dbSpotLightPhotosRef.push(self.photo)
         } else {
           dbSpotLightPhotosRef.orderByChild('key').equalTo(this.photoKey)

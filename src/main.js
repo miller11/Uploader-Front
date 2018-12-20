@@ -6,6 +6,8 @@ import VueRouter from 'vue-router'
 import { routes } from './routes'
 import {store} from "./store/store";
 
+import moment from 'moment'
+
 
 Vue.use(BootstrapVue);
 
@@ -54,6 +56,12 @@ Vue.filter('prettyBytes', function (num) {
   unit = units[exponent];
 
   return (neg ? '-' : '') + num + ' ' + unit;
+});
+
+Vue.filter('formatDate', function(value) {
+  if (value) {
+    return moment(String(value)).format('MM/DD/YYYY hh:mm')
+  }
 });
 
 new Vue({
