@@ -33,6 +33,7 @@ exports.processSignUp = functions.auth.user().onCreate((user) => {
       })
       .catch(error => {
         console.log(error);
+        return null;
       });
   }
 });
@@ -56,20 +57,15 @@ exports.processSignUp = functions.auth.user().onCreate((user) => {
 // Action for photo delete
 exports.deletePhoto = functions.database.ref('/photos/{albumid}/{photoid}').onDelete((snap, context) => {
 
-  snap.ref.once('value').then(function (snapshot) {
-
-    admin.database().ref('spotLightPhotos/').equalTo(context.params.photoid)
-      .once('value').then(function (snapshot) {
-      snapshot.forEach(function (childSnapshot) {
-        //remove each child
-        admin.database().ref('spotLightPhotos/').child(childSnapshot.key).remove();
-      });
+  admin.database().ref('spotLightPhotos/').equalTo(context.params.photoid)
+    .once('value').then(function (snapshot) {
+    snapshot.forEach(function (childSnapshot) {
+      //remove each child
+      admin.database().ref('spotLightPhotos/').child(childSnapshot.key).remove().catch(error => { console.log(error.message) });
     });
 
     return null;
-  }).catch(error => {
-    console.log(error);
-  });
+  }).catch(error => { console.log(error.message) });
 
   return null;
 });
