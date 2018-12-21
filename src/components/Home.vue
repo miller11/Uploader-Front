@@ -22,18 +22,16 @@
           <h2>About Bob</h2>
           <p>Bob shoots with:</p>
           <ul>
-            <li>Nikon</li>
-            <li>Something</li>
-            <li>Something</li>
-            <li>Working contact form with validation</li>
-            <li>Unstyled page elements for easy customization</li>
+            <li>Nikon DSLR</li>
+            <!--<li></li>-->
+            <!--<li></li>-->
+            <!--<li></li>-->
+            <!--<li></li>-->
           </ul>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis, omnis doloremque non cum id
-            reprehenderit, quisquam totam aspernatur tempora minima unde aliquid ea culpa sunt. Reiciendis quia dolorum
-            ducimus unde.</p>
+          <p>These are a collection of Bob's photos, taken of family, nature and sports. </p>
         </div>
         <div class="col-lg-6">
-          <img class="img-fluid rounded" src="http://placehold.it/700x450" alt="Family Picture">
+          <img class="img-fluid rounded" height="450" width="700" src="https://firebasestorage.googleapis.com/v0/b/uploader-5bdaa.appspot.com/o/static%2Ffamily-pic-xmas.jpg?alt=media&token=68fcce42-e7e0-44c0-b692-826bddc20d8e" alt="Family Picture">
         </div>
       </div>
       <!-- /.row -->
@@ -46,7 +44,7 @@
           <p>These photos are property of the photographer and this website and may only be used with permission.</p>
         </div>
         <div class="col-md-4">
-          <a class="btn btn-lg btn-secondary btn-block" href="#">Contact</a>
+          <a class="btn btn-lg btn-secondary btn-block"  href="mailto:bobm1627@gmail.com">Contact</a>
         </div>
       </div>
 
