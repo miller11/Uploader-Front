@@ -34,6 +34,14 @@
           <img class="img-fluid rounded" height="450" width="700" src="https://firebasestorage.googleapis.com/v0/b/uploader-5bdaa.appspot.com/o/static%2Ffamily-pic-xmas.jpg?alt=media&token=68fcce42-e7e0-44c0-b692-826bddc20d8e" alt="Family Picture">
         </div>
       </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <router-link :to="{name: 'aboutMe'}">
+            <a v-if="photoOwner" class="btn btn-sm btn-primary float-right" style="color: white">Edit</a>
+          </router-link>
+        </div>
+      </div>
+
       <!-- /.row -->
 
       <hr>
@@ -67,7 +75,7 @@
     },
     computed: {
       ...mapGetters([
-        'albums'
+        'albums', 'photoOwner'
       ])
     }
   }

@@ -28,6 +28,8 @@ export function dbAlbumPhotosRef(albumKey) {
 export const dbSpotLightPhotosRef = db.ref().child('spotLightPhotos');
 
 
+export const dbAboutMeRef = db.ref('aboutMe');
+
 // Storage stuff
 const storage = Firebase.storage();
 
@@ -36,3 +38,5 @@ export const stAlbumsRef = storage.ref().child('albums');
 export function stAlbumPhotosRef(albumKey) {
   return stAlbumsRef.child(albumKey);
 }
+
+export const stAboutMeRef = storage.ref().child('aboutMe');

@@ -3,6 +3,7 @@ import AlbumMosaic from './components/AlbumMosaic'
 import ManageAlbums from './components/ManageAlbums'
 import AlbumManage from './components/AlbumManage'
 import SpotlightManage from './components/SpotlightManage'
+import AboutMe from './components/AboutMe'
 
 export const routes = [
   {path: '/', name: 'homeLink', component: Home},
@@ -11,5 +12,6 @@ export const routes = [
   {path: '/albums/new', name: 'albumLinkNew', component: AlbumManage},
   {path: '/albums/manage/:albumKey', name: 'albumLinkEdit', component: AlbumManage, props: true},
   {path: '/front-page/manage', name: 'spotlightManage', component: SpotlightManage},
+  {path: '/about-me/edit', name: 'aboutMe', component: AboutMe},
   {path: '*', redirect: '/' }
 ];
