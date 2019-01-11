@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import BootstrapVue from 'bootstrap-vue'
+import Notifications from 'vue-notification'
 import VuePhotoSwipe from 'vue-photoswipe'
 import VueRouter from 'vue-router'
 import { routes } from './routes'
@@ -10,6 +11,8 @@ import moment from 'moment'
 
 
 Vue.use(BootstrapVue);
+
+Vue.use(Notifications);
 
 Vue.use(VuePhotoSwipe);
 

@@ -63,49 +63,66 @@
 
           dbAboutMeRef.child("message").set(this.message);
 
-          let file = this.fileImage;
-          let uploadTask = stAboutMeRef.put(file);
-          let self = this;
+          if(this.fileImage !== null) {
+            let file = this.fileImage;
+            let uploadTask = stAboutMeRef.put(file);
+            let self = this;
 
-          uploadTask.on('state_changed', function (snapshot) {
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            uploadTask.on('state_changed', function (snapshot) {
+              // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
 
-          }, function (error) {
-            alert("An error occurred uploading the photo.")
-          }, function () {
-            // Handle successful uploads on complete
-            uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+            }, function (error) {
+              alert("An error occurred uploading the photo.")
+            }, function () {
+              // Handle successful uploads on complete
+              uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
 
-              // load file and calculate dimensions
-              let fr = new FileReader;
+                // load file and calculate dimensions
+                let fr = new FileReader;
 
-              fr.onload = function() { // file is loaded
-                let img = new Image;
+                fr.onload = function () { // file is loaded
+                  let img = new Image;
 
-                img.onload = function() {
-                  let newFile = {
-                    name: file.name,
-                    upVotes: 0,
-                    size: file.size,
-                    type: file.type,
-                    h: img.height,
-                    w: img.width,
-                    src: downloadURL
+                  img.onload = function () {
+                    let newFile = {
+                      name: file.name,
+                      upVotes: 0,
+                      size: file.size,
+                      type: file.type,
+                      h: img.height,
+                      w: img.width,
+                      src: downloadURL
+                    };
+
+                    dbAboutMeRef.child("photo").set(newFile);
+                    self.photo = newFile;
+
+
                   };
 
-                  dbAboutMeRef.child("photo").set(newFile);
-                  self.photo = newFile;
+                  img.src = fr.result; // is the data URL because called with readAsDataURL
                 };
 
-                img.src = fr.result; // is the data URL because called with readAsDataURL
-              };
+                fr.readAsDataURL(file);
 
-              fr.readAsDataURL(file);
 
+                this.$notify({
+                  group: 'foo',
+                  title: 'Important message',
+                  text: 'Hello user! This is a notification!'
+                });
+
+              });
             });
-          });
+          }
 
-
+            this.$notify({
+              group: 'foo',
+              title: 'About Me updated',
+              text: '',
+              position: 'bottom left',
+              type: 'success'
+            });
         },
         onFileChange() {
           this.fileImage = this.$refs.file.files[0];

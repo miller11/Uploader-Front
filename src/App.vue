@@ -4,6 +4,8 @@
 
     <router-view></router-view>
 
+    <notifications position="bottom left" group="foo"></notifications>
+
     <u-footer></u-footer>
   </div>
 </template>
