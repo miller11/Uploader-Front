@@ -20,18 +20,10 @@
       <div class="row">
         <div class="col-lg-6">
           <h2>About Bob</h2>
-          <p>Bob shoots with:</p>
-          <ul>
-            <li>Nikon DSLR</li>
-            <!--<li></li>-->
-            <!--<li></li>-->
-            <!--<li></li>-->
-            <!--<li></li>-->
-          </ul>
-          <p>These are a collection of Bob's photos, taken of family, nature and sports. </p>
+          <p v-html="aboutMeMessage"></p>
         </div>
         <div class="col-lg-6">
-          <img class="img-fluid rounded" height="450" width="700" src="https://firebasestorage.googleapis.com/v0/b/uploader-5bdaa.appspot.com/o/static%2Ffamily-pic-xmas.jpg?alt=media&token=68fcce42-e7e0-44c0-b692-826bddc20d8e" alt="Family Picture">
+          <img class="img-fluid rounded" height="450" width="700" :src="aboutMePhoto.src" :alt="aboutMePhoto.name">
         </div>
       </div>
       <div class="row">
@@ -65,18 +57,33 @@
   import Header from "./Header.vue"
   import Album from "./Album"
   import { mapGetters } from 'vuex'
+  import {dbAboutMeRef} from "../firebaseConfig";
+
 
   export default {
     components: {uHeader: Header, uAlbum: Album},
     data() {
       return {
-
+        aboutMeMessage: null,
+        aboutMePhoto: null
       }
     },
     computed: {
       ...mapGetters([
         'albums', 'photoOwner'
       ])
+    },
+    mounted() {
+      let self = this;
+
+      dbAboutMeRef.child("message").once('value').then(function (snapshot) {
+        self.aboutMeMessage = snapshot.val();
+      });
+
+
+      dbAboutMeRef.child("photo").once('value').then(function (snapshot) {
+        self.aboutMePhoto = snapshot.val();
+      });
     }
   }
 </script>
