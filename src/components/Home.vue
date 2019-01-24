@@ -72,8 +72,7 @@
     computed: {
       ...mapGetters([
         'albums', 'photoOwner'
-      ]),
-
+      ])
     },
     created() {
       let self = this;
