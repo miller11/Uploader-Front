@@ -1,13 +1,12 @@
 <template>
-  <div class="col-lg-4 col-sm-6 portfolio-item">
+  <div class="col-lg-4 col-sm-6 portfolio-item preview-img-list">
     <div class="card h-100">
-      <a @click="showModal" v-bind:style="{ backgroundImage: 'url(' + album.coverPhoto.src + ')' }" :alt="album.coverPhoto.name"
-                                 class="card-img-top cover-photo"></a>
+      <div v-if="coverPhotoReady" @click.prevent="showPhotos"
+         v-bind:style="{ backgroundImage: 'url(' + album.coverPhoto.src + ')' }" :alt="album.coverPhoto.name"
+         class="card-img-top cover-photo preview-img-item"></div>
       <div class="card-body">
         <h4 class="card-title">
-          <router-link :to="{name: 'albumsViewLink', params: { albumKey: albumKey, albumName: album.name }}">
-            <a class="btn-link">{{ album.name }}</a>
-          </router-link>
+          <a class="btn-link" href="#"  @click.prevent="showPhotos" >{{ album.name }}</a>
         </h4>
         <p class="card-text">{{ album.description }} </p>
       </div>
@@ -62,7 +61,8 @@
     data() {
       return {
         modalShow: false,
-        photos: []
+        photos: [],
+        photoList: []
       }
     },
     components: {
@@ -72,16 +72,24 @@
       fontAwesomeIcon: FontAwesomeIcon
     },
     methods: {
-      showModal() {
+      showPhotos() {
         let self = this;
 
         dbAlbumPhotosRef(this.albumKey).once('value').then(function (snapshot) {
           if (snapshot.hasChildren()) {
+
+            for (let key in snapshot.val()) {
+              self.photoList.push({
+                src: snapshot.val()[key]['src'],
+                w: snapshot.val()[key]['w'],
+                h: snapshot.val()[key]['h']
+              });
+            }
+
             self.photos = snapshot.val();
+            self.$photoswipe.open(parseInt('0'), self.photoList)
           }
         });
-
-        this.modalShow = true;
       },
       deleteAlbum() {
         let self = this;
@@ -95,7 +103,7 @@
           });
         }
 
-        },
+      },
       deleteStorage() {
         let self = this;
 
@@ -118,31 +126,34 @@
 
         this.$emit('delete', this.albumKey);
       }
+    },
+    computed: {
+      isPhotoOwner() {
+        return this.$store.getters.photoOwner
       },
-      computed: {
-        isPhotoOwner() {
-          return this.$store.getters.photoOwner
-        },
-        isEditScreen() {
-          if (this.editScreen != null) {
-            return this.editScreen;
-          }
-
-          return false;
+      isEditScreen() {
+        if (this.editScreen != null) {
+          return this.editScreen;
         }
+
+        return false;
+      },
+      coverPhotoReady() {
+        return this.album.coverPhoto.src !== undefined;
       }
     }
+  }
 </script>
 
 <style scoped>
   .cover-photo {
     position: relative;
     float: left;
-    width:  100%;
+    width: 100%;
     height: 15rem;
     background: no-repeat 50% 50%;
-    object-fit:scale-down;
-    background-size:     cover;
+    object-fit: scale-down;
+    background-size: cover;
     cursor: pointer;
   }
 

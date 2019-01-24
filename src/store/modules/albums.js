@@ -6,7 +6,7 @@ const state = {
 };
 
 const getters = {
-  albums : state => state.albums
+  albums : state => state.albums.sort((a,b) => { return new Date(b.date) - new Date(a.date) })
 };
 
 const mutations = {

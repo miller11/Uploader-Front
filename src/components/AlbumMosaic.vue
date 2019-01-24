@@ -53,9 +53,9 @@
               w: snapshot.val()[key]['w'],
               h: snapshot.val()[key]['h']
             });
-
-            self.dbPhotos = snapshot.val();
           }
+
+          self.dbPhotos = snapshot.val();
         }
       });
     },

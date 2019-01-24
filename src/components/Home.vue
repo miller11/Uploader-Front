@@ -17,10 +17,10 @@
       </div>
 
       <!-- Features Section -->
-      <div class="row">
+      <div class="row" v-if="dataReady">
         <div class="col-lg-6">
           <h2>About Bob</h2>
-          <p v-html="aboutMeMessage"></p>
+          <p v-html="aboutMeMessage || ''"></p>
         </div>
         <div class="col-lg-6">
           <img class="img-fluid rounded" height="450" width="700" :src="aboutMePhoto.src" :alt="aboutMePhoto.name">
@@ -65,15 +65,17 @@
     data() {
       return {
         aboutMeMessage: null,
-        aboutMePhoto: null
+        aboutMePhoto: null,
+        dataReady: false
       }
     },
     computed: {
       ...mapGetters([
         'albums', 'photoOwner'
-      ])
+      ]),
+
     },
-    mounted() {
+    created() {
       let self = this;
 
       dbAboutMeRef.child("message").once('value').then(function (snapshot) {
@@ -83,6 +85,7 @@
 
       dbAboutMeRef.child("photo").once('value').then(function (snapshot) {
         self.aboutMePhoto = snapshot.val();
+        self.dataReady = true;
       });
     }
   }
