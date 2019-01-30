@@ -38,26 +38,27 @@
           </form>
 
           <hr class="mt-5"/>
+
+         <u-photo-upload v-if="hasPhotos" :album-key="albumKey" @newPhoto="newPhoto($event)"></u-photo-upload>
+
       </div>
+
 
       <div class="col-sm-12 col-md-6">
         <h3>Photos</h3>
 
         <hr/>
 
-        <u-photo-manage v-for="(photo, key) in photos" :key="key" :album-key="albumKey" :cover-photo-key="coverPhotoKey"
-                        :photo="photo" :photo-key="key" @delete="removePhoto($event)" @coverPhoto="coverPhoto($event)"></u-photo-manage>
+        <draggable v-model="photos">
+          <div class="col-sm-2"  v-for="(photo, key) in photos" :key="key">
+          <img :src="photo.src" :alt="photo.name" class="img-thumbnail menu-thumbnail">
+          </div>
+        </draggable>
+
+        <!--<u-photo-manage v-for="(photo, key) in photos" :key="key" :album-key="albumKey" :cover-photo-key="coverPhotoKey"-->
+                        <!--:photo="photo" :photo-key="key" @delete="removePhoto($event)" @coverPhoto="coverPhoto($event)"></u-photo-manage>-->
       </div>
 
-    </div>
-
-    <!--<h3 v-for="(photo, key) in photos" :key="key" :album-key="albumKey">{{key}}</h3>-->
-
-
-    <div class="row" v-if="hasPhotos">
-      <div class="col-sm-12 col-md-6">
-          <u-photo-upload :album-key="albumKey" @newPhoto="newPhoto($event)"></u-photo-upload>
-      </div>
     </div>
 
   </div>
@@ -70,12 +71,16 @@
   import bAlert from 'bootstrap-vue/es/components/alert/alert';
   import {dbAlbumsRef, dbAlbumPhotosRef} from "../firebaseConfig";
 
+  import draggable from 'vuedraggable'
+
+
 
   export default {
     components: {
       bAlert: bAlert,
       uPhotoUpload: PhotoUpload,
-      uPhotoManage: PhotoManage
+      uPhotoManage: PhotoManage,
+      draggable
     },
     data() {
       return {
@@ -179,7 +184,9 @@
 
         dbAlbumPhotosRef(self.albumKey).once('value').then(function (snapshot) {
           if(snapshot.hasChildren()) {
-            self.photos = snapshot.val();
+            let temp = snapshot.val();
+
+            self.photos = Object.keys(temp).map((k) =>temp[k]) ;
           }
         });
       }
