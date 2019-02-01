@@ -78,13 +78,15 @@
         dbAlbumPhotosRef(this.albumKey).orderByChild('sortOrder').once('value').then(function (snapshot) {
           if (snapshot.hasChildren()) {
 
-            for (let key in snapshot.val()) {
+            snapshot.forEach(function(child) {
+              console.log(child.val()); // NOW THE CHILDREN PRINT IN ORDER
+
               self.photoList.push({
-                src: snapshot.val()[key]['src'],
-                w: snapshot.val()[key]['w'],
-                h: snapshot.val()[key]['h']
+                src: child.val()['src'],
+                w: child.val()['w'],
+                h: child.val()['h']
               });
-            }
+            });
 
             self.photos = snapshot.val();
             self.$photoswipe.open(parseInt('0'), self.photoList)

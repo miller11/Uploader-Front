@@ -187,7 +187,7 @@
           self.album = snapshot.val();
         });
 
-        dbAlbumPhotosRef(self.albumKey).orderByChild('sortOrder').once('value').then(function (snapshot) {
+        dbAlbumPhotosRef(self.albumKey).once('value').then(function (snapshot) {
           if (snapshot.hasChildren()) {
             let dbPhotos = snapshot.val();
 
@@ -196,7 +196,7 @@
               temp['key'] = k;
 
               return temp;
-            });
+            }).sort((a, b) => a.sortOrder - b.sortOrder);
           }
         });
       }
