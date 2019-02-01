@@ -17,29 +17,30 @@
 
     <div class="row">
       <div class="col-sm-12 col-md-6">
-          <form @submit.prevent="saveAlbum">
-            <div class="form-group">
-              <label for="nameInput">Album name</label>
-              <input type="text" class="form-control" id="nameInput" v-model="album.name" placeholder="Album name">
-            </div>
+        <form @submit.prevent="saveAlbum">
+          <div class="form-group">
+            <label for="nameInput">Album name</label>
+            <input type="text" class="form-control" id="nameInput" v-model="album.name" placeholder="Album name">
+          </div>
 
-            <div class="form-group">
-              <label for="descriptionInput">Description</label>
-              <textarea class="form-control" id="descriptionInput" v-model="album.description" placeholder="Description" rows="3"></textarea>
-            </div>
+          <div class="form-group">
+            <label for="descriptionInput">Description</label>
+            <textarea class="form-control" id="descriptionInput" v-model="album.description" placeholder="Description"
+                      rows="3"></textarea>
+          </div>
 
-            <div class="form-check">
-              <input type="checkbox" v-model="album.private" class="form-check-input" id="privateCheck">
-              <label class="form-check-label" for="privateCheck">Private</label>
-            </div>
+          <div class="form-check">
+            <input type="checkbox" v-model="album.private" class="form-check-input" id="privateCheck">
+            <label class="form-check-label" for="privateCheck">Private</label>
+          </div>
 
 
-            <button type="submit" class="btn btn-primary float-right">Save</button>
-          </form>
+          <button type="submit" class="btn btn-primary float-right">Save</button>
+        </form>
 
-          <hr class="mt-5"/>
+        <hr class="mt-5"/>
 
-         <u-photo-upload v-if="hasPhotos" :album-key="albumKey" @newPhoto="newPhoto($event)"></u-photo-upload>
+        <u-photo-upload v-if="hasPhotos" :album-key="albumKey" @newPhoto="newPhoto($event)"></u-photo-upload>
 
       </div>
 
@@ -49,14 +50,10 @@
 
         <hr/>
 
-        <draggable v-model="photos">
-          <div class="col-sm-2"  v-for="(photo, key) in photos" :key="key">
-          <img :src="photo.src" :alt="photo.name" class="img-thumbnail menu-thumbnail">
-          </div>
+        <draggable v-model="photos" @end="orderUpdated">
+          <u-photo-manage v-for="(photo, key) in photos" :key="key" :album-key="albumKey" :cover-photo-key="coverPhotoKey"
+                          :photo="photo" :photo-key="key" @delete="removePhoto($event)" @coverPhoto="coverPhoto($event)"></u-photo-manage>
         </draggable>
-
-        <!--<u-photo-manage v-for="(photo, key) in photos" :key="key" :album-key="albumKey" :cover-photo-key="coverPhotoKey"-->
-                        <!--:photo="photo" :photo-key="key" @delete="removePhoto($event)" @coverPhoto="coverPhoto($event)"></u-photo-manage>-->
       </div>
 
     </div>
@@ -74,7 +71,6 @@
   import draggable from 'vuedraggable'
 
 
-
   export default {
     components: {
       bAlert: bAlert,
@@ -86,7 +82,7 @@
       return {
         album: {},
         albumKey: this.$route.params.albumKey,
-        photos: {},
+        photos: null,
         alert: {
           message: '',
           warningCountDown: 0,
@@ -125,14 +121,14 @@
 
         self.$set(self.photos, newPhoto.key, newPhoto);
 
-        if(self.album.coverPhoto === undefined || self.album.coverPhoto === null) {
+        if (self.album.coverPhoto === undefined || self.album.coverPhoto === null) {
           self.$set(self.album, 'coverPhoto', newPhoto);
         }
 
-        if(self.album.photoCount === undefined || self.album.photoCount === null) {
+        if (self.album.photoCount === undefined || self.album.photoCount === null) {
           self.$set(self.album, 'photoCount', 1);
         } else {
-          self.album.photoCount++;
+          self.album.photoCount = self.photos.length;
         }
 
         self.saveAlbum();
@@ -140,11 +136,11 @@
       removePhoto(key) {
         this.$delete(this.photos, key);
 
-        if(this.album.coverPhoto.key === key) {
+        if (this.album.coverPhoto.key === key) {
           this.album.coverPhoto = null;
         }
 
-        this.album.photoCount--;
+        this.album.photoCount = this.photos.length;
         this.saveAlbum();
       },
       coverPhoto(photoKey) {
@@ -160,6 +156,15 @@
             self.alert.successCountDown = 5;
           }
         });
+      },
+      orderUpdated() {
+        let self = this;
+
+        for(let i = 0; i < self.photos.length; i++) {
+          dbAlbumPhotosRef(self.albumKey).child(self.photos[i].key).once('value').then(function (snapshot) {
+            snapshot.ref.update({ sortOrder: i });
+          });
+        }
       }
     },
     computed: {
@@ -167,7 +172,7 @@
         return this.albumKey != null && this.photos != null;
       },
       coverPhotoKey() {
-        if(this.album.coverPhoto === undefined || this.album.coverPhoto === null){
+        if (this.album.coverPhoto === undefined || this.album.coverPhoto === null) {
           return "";
         } else {
           return this.album.coverPhoto.key;
@@ -182,11 +187,16 @@
           self.album = snapshot.val();
         });
 
-        dbAlbumPhotosRef(self.albumKey).once('value').then(function (snapshot) {
-          if(snapshot.hasChildren()) {
-            let temp = snapshot.val();
+        dbAlbumPhotosRef(self.albumKey).orderByChild('sortOrder').once('value').then(function (snapshot) {
+          if (snapshot.hasChildren()) {
+            let dbPhotos = snapshot.val();
 
-            self.photos = Object.keys(temp).map((k) =>temp[k]) ;
+            self.photos = Object.keys(dbPhotos).map(function(k) {
+              let temp = dbPhotos[k];
+              temp['key'] = k;
+
+              return temp;
+            });
           }
         });
       }

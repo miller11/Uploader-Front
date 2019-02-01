@@ -75,7 +75,7 @@
       showPhotos() {
         let self = this;
 
-        dbAlbumPhotosRef(this.albumKey).once('value').then(function (snapshot) {
+        dbAlbumPhotosRef(this.albumKey).orderByChild('sortOrder').once('value').then(function (snapshot) {
           if (snapshot.hasChildren()) {
 
             for (let key in snapshot.val()) {
