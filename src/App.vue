@@ -38,6 +38,8 @@
       this.$store.dispatch('setSpotLightPhotosRef', dbSpotLightPhotosRef);
     }
   }
+
+
 </script>
 
 <style>
