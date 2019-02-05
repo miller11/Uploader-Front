@@ -4,7 +4,6 @@ import BootstrapVue from 'bootstrap-vue'
 import Notifications from 'vue-notification'
 import VuePhotoSwipe from 'vue-photoswipe'
 import VueRouter from 'vue-router'
-import VueAnalytics from 'vue-analytics'
 import { routes } from './routes'
 import {store} from "./store/store";
 
@@ -23,15 +22,6 @@ Vue.use(VueRouter);
 Vue.config.productionTip = false;
 
 const isProd = process.env.NODE_ENV === 'production';
-
-Vue.use(VueAnalytics, {
-  id: 'UA-133664904-1',
-  router,
-  debug: {
-    enabled: !isProd,
-    sendHitTask: isProd
-  }
-});
 
 
 const router = new VueRouter({

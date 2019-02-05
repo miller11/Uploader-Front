@@ -4715,10 +4715,10 @@ firebase-functions@^2.0.5:
     jsonwebtoken "^8.2.1"
     lodash "^4.6.1"
 
-firebase-tools@^6.0.1:
-  version "6.2.2"
-  resolved "https://registry.yarnpkg.com/firebase-tools/-/firebase-tools-6.2.2.tgz#06ef9b729e857e489d7a464df238c22bcddedc73"
-  integrity sha512-paknn5f3E4yzkxde0AY10ESpWdJi49waojHjePv42sHtGNyS2VQ34jI0kJTdJ+95daIV8lhd5I8pjHVk34M+lQ==
+firebase-tools@^6.3.1:
+  version "6.3.1"
+  resolved "https://registry.yarnpkg.com/firebase-tools/-/firebase-tools-6.3.1.tgz#9a3e12a3215da2adc1df885ba32ddd6eac08bd43"
+  integrity sha512-wBlW1ad+kDQrwU5/SfTXkEe7xwt48oXskV4lHDCaOw/7PfGamuTA38aYpp+jisYCBgEj1275Heet5m62OOr6RQ==
   dependencies:
     JSONStream "^1.2.1"
     archiver "^2.1.1"
@@ -10788,11 +10788,6 @@ vm-browserify@0.0.4:
   integrity sha1-XX6kW7755Kb/ZflUOOCofDV9WnM=
   dependencies:
     indexof "0.0.1"
-
-vue-analytics@^5.16.2:
-  version "5.16.2"
-  resolved "https://registry.yarnpkg.com/vue-analytics/-/vue-analytics-5.16.2.tgz#37724aeec71bb830b1cf2d52a969cf190ef120c1"
-  integrity sha512-5JKGnVF33VHlXFREzht9z3Z11N4IA8vXNnpvYeAf72rEUyAuuU9Q9kX34bULW2CxMrahr8m06IB8+91GX0Ruag==
 
 vue-cli@^2.9.3:
   version "2.9.6"
